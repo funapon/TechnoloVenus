@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet" type="text/css" href="/css/calculator.css">
+      <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+      <script>
+          // 計算結果エリアの数値を一時的に格納する変数
+          let numtmp = 0;
+          // 演算子を一時的に格納する変数
+          let opetmp = null;
+
+          $(function(){
+            //電卓の各ボタンをクリックしたときの動作
+            $("button").click(function(event){
+              // 変数の宣言
+              // 押したボタンのtarget
+              const $target = $(event.target);
+              // 押したボタンのid名
+              const id = $target.attr('id');
+              // 計算結果エリアに表示されている数値
+              const $result = $("#result");
+              // 演算子ボタンの選択状態
+              const $selected = $(".selected");
+              // ACボタン
+              const $ac = $("#AC");
+
+              // 押したボタンのidがACだった場合
+              // 演算子ボタンが選択中の場合解除する
+              // ACボタンの表示をCからACにする
+              // 計算結果を0にする
+              if(id==="AC"){
+                //既に演算子ボタンを選択中の場合、演算子ボタンの選択状態を解除する
+                if($selected.length===1)$selected.removeClass("selected");
+
+                // ACボタンの表示がCの場合、表示をACに変更する
+                if($ac.text()==="C")$ac.text("AC");
+
+                //計算結果エリアに0を表示
+                $result.text(0);
+              }
+              //押したボタンが数字だった場合、メソッドclickNumberを実行する
+              else if($target.hasClass("number")){
+                clickNumber($target, $result, $selected, $ac);
+              }
+              //押したボタンが演算子だった場合、メソッドclickOpeを実行する
+              else if($target.hasClass("ope")){
+                clickOpe($target, $result, $selected);
+              }
+              //押したボタンが=だった場合計、メソッドclickEqualを実行する
+              else if(id==="equal"){
+                clickEqual($result, $selected);
+              }
+              //押したボタンが+/-だった場合、メソッドclickPlMiを実行する
+              else if(id==="plusminus"){
+                clickPlMi($result);
+              }
+              //押したボタンが%だった場合、メソッドclickPercentを実行する
+              else if(id==="percent") {
+                clickPercent($result);
+              }
+              // 押したボタンが少数点だった場合、メソッドclickDecimalを実行する
+              else if(id==="decimal") {
+                clickDecimal($result, $ac, $result);　
+              }
+
+              // 計算結果エリアの値が
+            })
+          });
+
+          // 押したボタンが数値だったときのメソッド
+          // 押したボタンの数値を計算結果エリアに表示する
+          // ACボタンの表示をCに変更する
+          function clickNumber($target, $result, $selected, $ac) {
+            // ACボタンの表示がACの場合、表示をCに変更する
+            if($ac.text()==="AC")$ac.text("C");
+
+            //押したボタンの数値を変数に入れる
+            const number = $target.text();
+            //計算結果エリアに表示されている数値
+            const current = $result.text();
+
+            //演算子ボタンが選択中だった場合
+            if($selected.length===1){
+              // 計算結果エリアのクリア後、押した数値を表示する
+              $result.text(number);
+              // 演算子ボタンの選択状態を解除する
+              $selected.removeClass("selected");
+              //処理を終了
+              return;
+            }
+
+            //計算結果エリアの値が0だった場合
+            if(current==="0"){
+              // 計算結果エリアのクリア後、押した数値を表示する
+              $result.text(number);
+              //処理を終了
+              return;
+            }
+
+            // 上記以外の場合
+            // 計算結果に表示されている数値の後ろに押したボタンの数値を結合して表示する
+            // 計算結果エリアの値と押したボタンの数値を結合
+            const combined = current + number;
+            // 桁数チェック、結合した桁数が9以下の場合は表示する、9より大きい場合は何もしない
+            if(combined.length <= 9) {
+              $result.text(combined);
+            }
+          }
+
+          // 押したボタンが演算子だったときのメソッド
+          // 計算結果エリアの値と、押した演算子を変数に入れて保持する
+          function clickOpe($target, $result, $selected) {
+
+            //既に演算子ボタンが選択中だった場合、演算子ボタンの選択状態を解除する
+            if($selected.length===1)$selected.removeClass("selected");
+
+            //selectedクラスを追加して、直前に押した演算子のボタンの色を変えたままにする
+            $target.addClass("selected");
+
+            //計算結果エリアの値を変数に入れる
+            numtmp = $result.text();
+            //押した演算子を変数に入れる
+            opetmp = $target.text();
+          }
+
+          // 押したボタンがイコールだったときのメソッド
+          // 計算結果を計算結果エリアに表示する
+          function clickEqual($result, $selected) {
+            // 変数の宣言
+            // ボタン押下後の計算結果格納用
+            let result = 0;
+            // 今計算結果エリアに表示されている値の格納用
+            const current = $result.text();
+
+            //既に演算子ボタンが選択中だった場合、演算子ボタンの選択状態を解除する
+            if($selected.length===1)$selected.removeClass("selected");
+
+            // どの演算子のボタンを押したかで処理分岐
+            // +だった場合、足し算する
+            if(opetmp==="+"){
+              result = Number(numtmp) + Number(current);
+            }
+            //-だった場合、引き算する
+            else if(opetmp==="-"){
+              result = Number(numtmp) - Number(current);
+            }
+            //×だった場合、掛け算する
+            else if(opetmp==="×"){
+              result = Number(numtmp) * Number(current);
+            }
+            //÷だった場合、割り算する
+            else if(opetmp==="÷"){
+              //0除算の場合エラー
+              if(Number(current)===0){
+                result = "エラー";
+              }
+              else {
+                result = Number(numtmp) / Number(current);
+                // 計算結果エリアに表示する文字数の調整処理
+                if(String(result).length >= 11) {
+                  // 計算結果が11文字以上（循環小数などの理由）の場合、10文字目まで表示する
+                  result = String(result).substr(0, 10);
+                }
+              }
+            }
+            // 計算結果を計算結果エリアに表示
+            $result.text(result);
+          }
+
+          // 押したボタンがプラスマイナスだったときのメソッド
+          // 計算結果エリアの数値のプラスマイナスを切り替える
+          function clickPlMi($result) {
+            // 変数の宣言
+            // プラスマイナスボタン押下後の結果格納用
+            let result = 0;
+            // 計算結果エリアの値を格納
+            const current = $result.text();
+
+            // 計算結果の値によって分岐
+            // 計算結果の値が0より大きい場合、マイナスの値にする
+            if(current>0){
+              result = Number(current) - (Number(current)*2);
+            }
+            //現在の値が0より小さい場合、プラスの値にする
+            else if(current<0){
+              result = Math.abs(Number(current));
+            }
+            //現在の値がゼロの場合、ゼロにマイナスをつける
+            else if(current==="0"){
+              result = "-0";
+            }
+            //現在の値がマイナス付きゼロの場合、マイナスを取ってゼロにする
+            else if(current==="-0"){
+              result = 0;
+            }
+            //ボタン押下後の結果を計算結果エリアに表示
+            $result.text(result);
+          }
+
+          // 押したボタンがパーセントだったときのメソッド
+          // 計算結果エリアの値に0.01を掛ける
+          function clickPercent($result) {
+            // 計算結果エリアの値に0.01を掛けて表示
+            $result.text(Number($result.text()) * 0.01);
+          }
+
+          // 押したボタンが少数点だったときのメソッド
+          // ACボタンの表示をACからCに変更する
+          // 計算結果エリアの値の末尾に少数点を結合する
+          function clickDecimal($result, $ac, $result) {
+            // ACボタンの表示がACの場合、表示をCに変更する
+            if($ac.text()==="AC") $ac.text("C");
+
+            // 計算結果エリアの値の末尾に少数点を結合して表示
+            // 既に少数点が表示されている場合は何もしない
+            if($result.text().indexOf(".") === -1){
+              $result.text($result.text() + ".");
+            }
+          }
+
+          // 計算結果エリアに値を表示するメソッド
+          // 3桁おきに桁区切りする
+          function displayResult(result) {
+            const formatter = new Intl.NumberFormat("ja-JP");
+            $result.text(formatter.format(Number(result)));
+          }
+
+          // 計算結果エリアの値をカンマを削除して取得するメソッド
+          function getResult($result) {
+          }
+
+      </script>
+  </head>
+  <body>
+    <div id="result">0</div>
+    <table>
+      <tr>
+        <td><button id="AC" class="yoko">AC</button></td>
+        <td><button id="plusminus" class="yoko">+/-</button></td>
+        <td><button id="percent" class="yoko">%</button></td>
+        <td><button class="tate ope">÷</button></td>
+      </tr>
+      <tr>
+        <td><button class="number">7</button></td>
+        <td><button class="number">8</button></td>
+        <td><button class="number">9</button></td>
+        <td><button class="tate ope">×</button></td>
+      </tr>
+      <tr>
+        <td><button class="number">4</button></td>
+        <td><button class="number">5</button></td>
+        <td><button class="number">6</button></td>
+        <td><button class="tate ope">-</button></td>
+      </tr>
+      <tr>
+        <td><button class="number">1</button></td>
+        <td><button class="number">2</button></td>
+        <td><button class="number">3</button></td>
+        <td><button class="tate ope">+</button></td>
+      </tr>
+      <tr>
+        <td colspan="2"><button class="zero number">0</button></td>
+        <td><button id="decimal">.</button></td>
+        <td><button class="tate" id="equal">=</button></td>
+      </tr>
+    </table>
+  </body>
+</html>
