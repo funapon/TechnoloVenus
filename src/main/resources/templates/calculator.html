@@ -138,7 +138,9 @@
 
             //げもいモード判定
             // 計算結果エリアの値が「1234」の場合、げもいモードにする
-            if(current==="1234")$('.gemoi-mode').css('display','block');
+            if(current==="1234") {
+              $('.gemoi-mode').css('display','block');
+            }
 
             //既に演算子ボタンが選択中だった場合、演算子ボタンの選択状態を解除する
             if($selected.length===1)$selected.removeClass("selected");
