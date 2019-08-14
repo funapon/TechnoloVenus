@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
   <head>
-      <link rel="stylesheet" type="text/css" href="/css/calculator.css">
+      <link rel="stylesheet" type="text/css" href="../static/css/calculator.css" th:href="@{/css/calculator.css}">
       <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -135,6 +136,12 @@
             // 今計算結果エリアに表示されている値の格納用
             const current = $result.text();
 
+            //げもいモード判定
+            // 計算結果エリアの値が「1234」の場合、げもいモードにする
+            if(current==="1234") {
+              $('.gemoi-mode').css('display','block');
+            }
+
             //既に演算子ボタンが選択中だった場合、演算子ボタンの選択状態を解除する
             if($selected.length===1)$selected.removeClass("selected");
 
@@ -235,37 +242,43 @@
       </script>
   </head>
   <body>
-    <div id="result">0</div>
-    <table>
-      <tr>
-        <td><button id="AC" class="yoko">AC</button></td>
-        <td><button id="plusminus" class="yoko">+/-</button></td>
-        <td><button id="percent" class="yoko">%</button></td>
-        <td><button class="tate ope">÷</button></td>
-      </tr>
-      <tr>
-        <td><button class="number">7</button></td>
-        <td><button class="number">8</button></td>
-        <td><button class="number">9</button></td>
-        <td><button class="tate ope">×</button></td>
-      </tr>
-      <tr>
-        <td><button class="number">4</button></td>
-        <td><button class="number">5</button></td>
-        <td><button class="number">6</button></td>
-        <td><button class="tate ope">-</button></td>
-      </tr>
-      <tr>
-        <td><button class="number">1</button></td>
-        <td><button class="number">2</button></td>
-        <td><button class="number">3</button></td>
-        <td><button class="tate ope">+</button></td>
-      </tr>
-      <tr>
-        <td colspan="2"><button class="zero number">0</button></td>
-        <td><button id="decimal">.</button></td>
-        <td><button class="tate" id="equal">=</button></td>
-      </tr>
-    </table>
+    <div class="dentaku">
+      <div class="display">
+        <div id="result">0</div>
+        <img class="balloon gemoi-mode" src="../static/img/balloon.png" th:src="@{/img/balloon.png}">
+      <table>
+        <tr>
+          <td><button id="AC" class="yoko">AC</button></td>
+          <td><button id="plusminus" class="yoko">+/-</button></td>
+          <td><button id="percent" class="yoko">%</button></td>
+          <td><button class="tate ope">÷</button></td>
+        </tr>
+        <tr>
+          <td><button class="number">7</button></td>
+          <td><button class="number">8</button></td>
+          <td><button class="number">9</button></td>
+          <td><button class="tate ope">×</button></td>
+        </tr>
+        <tr>
+          <td><button class="number">4</button></td>
+          <td><button class="number">5</button></td>
+          <td><button class="number">6</button></td>
+          <td><button class="tate ope">-</button></td>
+        </tr>
+        <tr>
+          <td><button class="number">1</button></td>
+          <td><button class="number">2</button></td>
+          <td><button class="number">3</button></td>
+          <td><button class="tate ope">+</button></td>
+        </tr>
+        <tr>
+          <td colspan="2"><button class="zero number">0</button></td>
+          <td><button id="decimal">.</button></td>
+          <td><button class="tate" id="equal">=</button></td>
+        </tr>
+      </table>
+      <img class="left-img gemoi-mode" src="../static/img/side1.png" th:src="@{/img/side1.png}">
+      <img class="right-img gemoi-mode" src="../static/img/side2.png" th:src="@{/img/side2.png}">
+    </div>
   </body>
 </html>
