@@ -44,6 +44,35 @@ button.selected{
 div{
   text-align: right;
   margin-bottom: 10px;
-  width: 416px;
+  width: 100%;
   font-size:100px;
+}
+/* げもいモード用設定 */
+.dentaku{
+  position: relative;
+  width: 416px;
+  margin: 80px;
+  padding: 0px 30px;
+}
+.left-img{
+  position: absolute;
+  left: -80px;
+  top: 15px;
+}
+.right-img{
+  position: absolute;
+  right: -260px;
+  top: 15px;
+}
+.display {
+  position: relative;
+}
+.balloon {
+  position: absolute;
+  top: 0px;
+  left: 7px;
+  width: 110%;
+}
+.gemoi-mode {
+  display: none;
 }
