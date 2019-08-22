@@ -1,0 +1,24 @@
+.title {
+
+}
+h1 {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.title_venus {
+  color : magenta;
+}
+.link_list {
+  font-family: 'Trebuchet MS',sans-serif;
+}
+.link_list a {
+  font-size: 20px;
+  text-decoration: none;
+  display: block;
+  color: #990045;
+}
+.link_list a:visited {
+  color : #e388ba; 
+}
+.link_list a:hover {
+  color: magenta;
+}
