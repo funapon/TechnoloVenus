@@ -1,7 +1,3 @@
-/*
- * runstant
- */
-
 phina.globalize();
 
 var ASSETS = {
@@ -35,9 +31,6 @@ phina.define('MainScene', {
       //移動
       this.x += this.vx;
     }
-
-    var self = this;
-    self.backgroundColor = 'skyblue';
   },
 });
 
