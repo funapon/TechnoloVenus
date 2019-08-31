@@ -4,16 +4,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * yozoraページのURLを定義するクラス
+ * インデックスページのURLを定義するクラス
  */
 @Controller
-public class YozoraController {
+public class IndexController {
 	/**
-	 * yozoraページのhtmlファイル名を返すメソッド
+	 * indexページのhtmlファイル名を返すメソッド
 	 * @return htmlファイル名
 	 */
-	@GetMapping("/yozora")
-	public String goYozora() {
-		return "yozora";
+	@GetMapping("/")
+	public String goIndex() {
+		return "index";
 	}
 }
