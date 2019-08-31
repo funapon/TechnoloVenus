@@ -17,7 +17,6 @@ phina.define('MainScene', {
     // 背景
     Sprite('bg').addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
 
-    // TODO: ここにコードを書いていく
     //魔女っ子の表示  
   　var majokko = Sprite('majokko').addChildTo(this);
   　
