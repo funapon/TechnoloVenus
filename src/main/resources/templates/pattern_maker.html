@@ -1,0 +1,31 @@
+<html lang="ja"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>地紋メーカー</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/pattern_maker.css" th:href="@{/css/pattern_maker.css}">
+  <script
+  src="../static/js/pattern_maker.js" th:src="@{/js/pattern_maker.js}"></script>
+</head>
+<body onload="init()">
+  <p>地紋メーカー</p>
+  <input type="button" value="クリア" onclick="clearPattern()">
+  <input type="button" value="地紋パーツを保存" onclick="savePattern(0)">
+  <input type="radio" name="size" id="size_4" onchange="drawPattern()" checked>4×4
+  <input type="radio" name="size" id="size_8" onchange="drawPattern()">8×8
+  <input type="radio" name="size" id="size_16" onchange="drawPattern()">16×16
+  <input type="button" value="地紋画像を保存" onclick="savePattern(1)">
+  <hr>
+  <div>
+    <canvas id="canvasGrid" width="160" height="160"></canvas>
+    <canvas id="canvasDraw" width="160" height="160" onmousedown="startDraw(event)" onmousemove="draw(event)" onmouseup="endDraw(event)" onmouseleave="endDraw(event)"></canvas><br>
+    <input type="checkbox" id="grid" checked onchange="showGrid()">グリッド<br>
+    ペンの太さ：<input type="number" id="pen" value="5" min="1" max="10"><br>
+    ペンの色：<input type="color" id="color" value="#0000FF"><br>
+  </div>
+  <canvas id="canvasPattern"></canvas>
+</body>
+</html>

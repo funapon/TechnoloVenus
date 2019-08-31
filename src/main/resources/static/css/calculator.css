@@ -1,0 +1,78 @@
+body *{
+  font-family: Georgia;
+  font-size: 49px;
+  color: dimgray;
+}
+
+#id {
+  font-size: 100px;
+}
+
+td {
+  width: 100px;
+  height: 100px;
+}
+button {
+  width: 100%;
+  height: 100%;  
+  border-radius: 50%;
+  border: none;
+  background-color: pink;
+  font-weight: bold;
+  transition: all 300ms 0ms ease-out;
+  outline:none;
+}
+button:active {
+  opacity: 0.2;
+}
+
+button.zero{
+  border-radius: 60px;
+  text-align: left;
+  padding-left: 33px;
+}
+button.selected{
+  color: #c5f6f6;
+  background-color:dimgray;
+}
+.tate{
+  background-color:#c5f6f6;
+}
+.yoko{
+  background-color: #ff9aab;
+}
+div{
+  text-align: right;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size:100px;
+}
+/* げもいモード用設定 */
+.dentaku{
+  position: relative;
+  width: 416px;
+  margin: 80px;
+  padding: 0px 30px;
+}
+.left-img{
+  position: absolute;
+  left: -80px;
+  top: 15px;
+}
+.right-img{
+  position: absolute;
+  right: -260px;
+  top: 15px;
+}
+.display {
+  position: relative;
+}
+.balloon {
+  position: absolute;
+  top: 0px;
+  left: 7px;
+  width: 110%;
+}
+.gemoi-mode {
+  display: none;
+}
