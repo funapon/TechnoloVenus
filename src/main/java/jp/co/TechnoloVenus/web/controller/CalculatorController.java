@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class CalculatorController {
+	/**
+	 * calculatorページのhtmlファイル名を返すメソッド
+	 * @return
+	 */
 	@GetMapping("/calculator")
 	public String goCaluculator() {
 		return "calculator";
