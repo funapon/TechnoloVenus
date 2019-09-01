@@ -58,7 +58,7 @@ phina.define('MainScene', {
 phina.main(function() {
   // アプリケーションを生成
   var app = GameApp({
-    // メインシーン ら開始
+    // メインシーンから開始
     startLabel: 'main',
     // アセット読み込み
     assets: ASSETS,
