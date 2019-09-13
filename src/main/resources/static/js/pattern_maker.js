@@ -1,13 +1,13 @@
 // 変数の宣言
-// 画面左に表示される実際に模様を書く子画面（グリッドキャンバス）
-const canvas = document.getElementById("canvasDraw");
-const context = canvas.getContext("2d");
+// 実際に模様を書くキャンバス（ドローキャンバス）
+const canvasDraw = document.getElementById("canvasDraw");
+const contextDraw = canvasDraw.getContext("2d");
 
-// グリッドキャンバス上のグリッド
+// ペイントキャンバス上に重ねるグリッド（グリッドキャンバス）
 const canvasGrid = document.getElementById("canvasGrid");
 const contextGrid = canvasGrid.getContext("2d");
 
-// 生成された地紋が描画される（地紋キャンバス）
+// 生成された地紋が表示されるキャンバス（パターンキャンバス）
 const canvasPattern = document.getElementById("canvasPattern");
 const contextPattern = canvasPattern.getContext("2d");
 
@@ -18,10 +18,19 @@ let sy;
 // マウスが押されているかの状態
 let mouseDown = false;
 
+// ドローキャンバス、パターンキャンバスの背景色設定
+fillCanvasBackground();
+// グリッドの表示
 showGrid();
 
+function fillCanvasBackground() {
+  // パターンキャンバスの背景色指定
+  contextPattern.fillStyle = "#000000";
+  contextPattern.fillRect(0, 0, canvasPattern.width, canvasPattern.height);
+}
+
 function showGrid() {
-  // グリッドキャンバスのクリア（黒で塗りつぶす）
+  // グリッドキャンバスの背景色指定(グリッドのクリア)
   contextGrid.fillStyle = "#oooooo";
   contextGrid.fillRect(0, 0, canvasGrid.width, canvasGrid.height);
   // グリッドの描画
@@ -44,7 +53,7 @@ function startDraw(event) {
   // マウスボタンが押された
   mouseDown = true;
   // 始点をセット
-  const canvasRect = canvas.getBoundingClientRect();
+  const canvasRect = canvasDraw.getBoundingClientRect();
   sx = event.clientX - canvasRect.left;
   sy = event.clientY - canvasRect.top;
 }
@@ -53,17 +62,17 @@ function draw(event) {
   // マウスボタンが押されているとき描画
   if (mouseDown) {
     // 終点をセット
-    const canvasRect = canvas.getBoundingClientRect();
+    const canvasRect = canvasDraw.getBoundingClientRect();
     const ex = event.clientX - canvasRect.left;
     const ey = event.clientY - canvasRect.top;
     // 描画
-    context.lineCap = "round";
-    context.lineWidth = document.getElementById("pen").value;
-    context.strokeStyle = document.getElementById("color").value;
-    context.beginPath();
-    context.moveTo(sx, sy);
-    context.lineTo(ex, ey);
-    context.stroke();
+    contextDraw.lineCap = "round";
+    contextDraw.lineWidth = document.getElementById("pen").value;
+    contextDraw.strokeStyle = document.getElementById("color").value;
+    contextDraw.beginPath();
+    contextDraw.moveTo(sx, sy);
+    contextDraw.lineTo(ex, ey);
+    contextDraw.stroke();
     // 始点を変更
     sx = ex;
     sy = ey;
@@ -82,11 +91,11 @@ function drawPattern() {
   let size = 4;
   if(document.getElementById("size_8").checked) size *= 2;
   if(document.getElementById("size_16").checked) size *= 4;
-  canvasPattern.width = size * canvas.width;
-  canvasPattern.height = size * canvas.height;
+  canvasPattern.width = size * canvasDraw.width;
+  canvasPattern.height = size * canvasDraw.height;
   // 地紋パーツを取得
   const image = new Image();
-  image.src = canvas.toDataURL("image/png");
+  image.src = canvasDraw.toDataURL("image/png");
   // 上下左右反転繰り返し描画
   image.onload = function() {
     for(let x=0; x<size/2; x++) {
@@ -102,28 +111,28 @@ function drawPattern() {
 
 function reverse(image, x, y, sx, sy){
   contextPattern.save();
-  contextPattern.translate(x*2*canvas.width, y*2*canvas.height);
+  contextPattern.translate(x*2*canvasDraw.width, y*2*canvasDraw.height);
   contextPattern.scale(sx, sy);
-  contextPattern.drawImage(image,0,0,canvas.width,canvas.height);
+  contextPattern.drawImage(image,0,0,canvasDraw.width,canvasDraw.height);
   contextPattern.restore();
 }
 
 function clearPattern() {
   // キャンパスをクリア
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
   contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
 }
 
 function savePattern(n) {
   // 保存するキャンバス（canvasまたはcanvasPattern)
-  let targetCanvas = canvas;
+  let targetCanvas = canvasDraw;
   if(n == 1) {
     targetCanvas = canvasPattern;
   }
   // 名前を付けて保存（ダウンロード）
   const filename = window.prompt("ファイル名を入力して下さい", "pattern.png");
   if(filename != null) {
-    if(canvas.msToBlob) {
+    if(canvasDraw.msToBlob) {
       // msToBlobを使用できるブラウザ
       const blob = targetCanvas.msToBlob();
       window.navigator.msSaveBlob(blob, filename);
