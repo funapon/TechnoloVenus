@@ -7,10 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>地紋メーカー</title>
   <link rel="stylesheet" type="text/css" href="../static/css/pattern_maker.css" th:href="@{/css/pattern_maker.css}">
-  <script
-  src="../static/js/pattern_maker.js" th:src="@{/js/pattern_maker.js}"></script>
 </head>
-<body onload="init()">
+<body>
   <p>地紋メーカー</p>
   <input type="button" value="クリア" onclick="clearPattern()">
   <input type="button" value="地紋パーツを保存" onclick="savePattern(0)">
@@ -27,5 +25,6 @@
     ペンの色：<input type="color" id="color" value="#0000FF"><br>
   </div>
   <canvas id="canvasPattern"></canvas>
+  <script src="../static/js/pattern_maker.js" th:src="@{/js/pattern_maker.js}"></script>
 </body>
 </html>

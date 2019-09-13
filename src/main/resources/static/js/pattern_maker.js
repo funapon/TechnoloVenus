@@ -1,33 +1,27 @@
-var canvas;
-var context;
-var canvasGrid;
-var contextGrid;
-var canvasPattern;
-var contextPattern;
-var canvasRect;
-var sx;
-var sy;
-var mouseDown = false;
+// 変数の宣言
+// 画面左に表示される実際に模様を書く子画面（グリッドキャンバス）
+const canvas = document.getElementById("canvasDraw");
+const context = canvas.getContext("2d");
 
-function init() {
-  // キャンバスの取得
-  canvas = document.getElementById("canvasDraw");
-  context = canvas.getContext("2d");
+// グリッドキャンバス上のグリッド
+const canvasGrid = document.getElementById("canvasGrid");
+const contextGrid = canvasGrid.getContext("2d");
 
-  context.fillStyle="black";
-  context.fillRect(0,0,canvas.width,canvas.height);
+// 生成された地紋が描画される（地紋キャンバス）
+const canvasPattern = document.getElementById("canvasPattern");
+const contextPattern = canvasPattern.getContext("2d");
 
-  canvasGrid = document.getElementById("canvasGrid");
-  contextGrid = canvasGrid.getContext("2d");
-  canvasPattern = document.getElementById("canvasPattern");
-  contextPattern = canvasPattern.getContext("2d");
-  canvasRect = canvas.getBoundingClientRect();
-  // グリッドの表示
-  showGrid();
-}
+// クリックされた場所の座標
+let sx;
+let sy;
+
+// マウスが押されているかの状態
+let mouseDown = false;
+
+showGrid();
 
 function showGrid() {
-  // グリッドキャンバスのクリア（白で塗りつぶす）
+  // グリッドキャンバスのクリア（黒で塗りつぶす）
   contextGrid.fillStyle = "#oooooo";
   contextGrid.fillRect(0, 0, canvasGrid.width, canvasGrid.height);
   // グリッドの描画
@@ -35,8 +29,8 @@ function showGrid() {
     contextGrid.strokeStyle = "#CCCCCC";
     contextGrid.setLineDash([2,2]);
     contextGrid.beginPath();
-    var w = canvasGrid.width / 4;
-    for(var i=1; i<4; i++) {
+    const w = canvasGrid.width / 4;
+    for(let i=1; i<4; i++) {
       contextGrid.moveTo(i*w, 0);
       contextGrid.lineTo(i*w, canvasGrid.height);
       contextGrid.moveTo(0, i*w);
@@ -50,6 +44,7 @@ function startDraw(event) {
   // マウスボタンが押された
   mouseDown = true;
   // 始点をセット
+  const canvasRect = canvas.getBoundingClientRect();
   sx = event.clientX - canvasRect.left;
   sy = event.clientY - canvasRect.top;
 }
@@ -57,9 +52,10 @@ function startDraw(event) {
 function draw(event) {
   // マウスボタンが押されているとき描画
   if (mouseDown) {
-    // 始点をセット
-    var ex = event.clientX - canvasRect.left;
-    var ey = event.clientY - canvasRect.top;
+    // 終点をセット
+    const canvasRect = canvas.getBoundingClientRect();
+    const ex = event.clientX - canvasRect.left;
+    const ey = event.clientY - canvasRect.top;
     // 描画
     context.lineCap = "round";
     context.lineWidth = document.getElementById("pen").value;
@@ -83,18 +79,18 @@ function endDraw(event) {
 
 function drawPattern() {
   // サイズを取得
-  var size = 4;
+  let size = 4;
   if(document.getElementById("size_8").checked) size *= 2;
   if(document.getElementById("size_16").checked) size *= 4;
   canvasPattern.width = size * canvas.width;
   canvasPattern.height = size * canvas.height;
   // 地紋パーツを取得
-  var image = new Image();
+  const image = new Image();
   image.src = canvas.toDataURL("image/png");
   // 上下左右反転繰り返し描画
   image.onload = function() {
-    for(var x=0; x<size/2; x++) {
-      for(var y=0; y<size/2; y++) {
+    for(let x=0; x<size/2; x++) {
+      for(let y=0; y<size/2; y++) {
         reverse(image, x, y, 1, 1);
         reverse(image, x+1, y, -1, 1);
         reverse(image, x, y+1, 1, -1);
@@ -120,20 +116,20 @@ function clearPattern() {
 
 function savePattern(n) {
   // 保存するキャンバス（canvasまたはcanvasPattern)
-  var targetCanvas = canvas;
+  let targetCanvas = canvas;
   if(n == 1) {
     targetCanvas = canvasPattern;
   }
   // 名前を付けて保存（ダウンロード）
-  var filename = window.prompt("ファイル名を入力して下さい", "pattern.png");
+  const filename = window.prompt("ファイル名を入力して下さい", "pattern.png");
   if(filename != null) {
     if(canvas.msToBlob) {
       // msToBlobを使用できるブラウザ
-      var blob = targetCanvas.msToBlob();
+      const blob = targetCanvas.msToBlob();
       window.navigator.msSaveBlob(blob, filename);
     } else {
       // それ以外のブラウザ
-      var a = document.createElement("a");
+      const a = document.createElement("a");
       a.href = targetCanvas.toDataURL("image/png");
       a.download = filename;
       document.body.appendChild(a);
