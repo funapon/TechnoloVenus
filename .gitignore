@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# MacでFinderの表示設定を保存するファイル
+.DS_Store
