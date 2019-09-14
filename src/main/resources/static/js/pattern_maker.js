@@ -22,9 +22,8 @@ let mouseDown = false;
 showGrid();
 
 function showGrid() {
-  // グリッドキャンバスのクリア、指定した背景色で塗りつぶす
-  contextGrid.fillStyle = "#oooooo";
-  contextGrid.fillRect(0, 0, canvasGrid.width, canvasGrid.height);
+  // グリッドキャンバスのクリア
+  contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
 
   // グリッドの描画
   if (document.getElementById("grid").checked) {

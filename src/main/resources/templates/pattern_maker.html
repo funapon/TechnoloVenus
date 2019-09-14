@@ -20,8 +20,8 @@
   <input type="button" value="地紋画像を保存" onclick="savePattern(1)">
   <hr>
   <div>
-    <canvas id="canvasGrid" width="160" height="160"></canvas>
-    <canvas id="canvasDraw" width="160" height="160" onmousedown="startDraw(event)" onmousemove="draw(event)" onmouseup="endDraw(event)" onmouseleave="endDraw(event)"></canvas><br>
+    <canvas id="canvasDraw" width="160" height="160"></canvas><br>
+    <canvas id="canvasGrid" width="160" height="160" onmousedown="startDraw(event)" onmousemove="draw(event)" onmouseup="endDraw(event)" onmouseleave="endDraw(event)"></canvas>
     <input type="checkbox" id="grid" checked onchange="showGrid()">グリッド<br>
     ペンの太さ：<input type="number" id="pen" value="5" min="1" max="10"><br>
     ペンの色：<input type="color" id="color" value="#0000FF"><br>

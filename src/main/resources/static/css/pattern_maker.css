@@ -10,7 +10,12 @@ div {
   background-color: #EEEEEE;
   user-select: none;
 }
-#canvasDraw {
+/* #canvasDraw {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+} */
+#canvasGrid {
   position: absolute;
   top: 10px;
   left: 10px;
