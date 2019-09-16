@@ -18,9 +18,36 @@ let sy;
 // マウスが押されているかの状態
 let mouseDown = false;
 
+// キャンバスの背景色一時保存用;
+let tmpCanvasColor;
+
+// キャンバスのクリア（描画キャンバスの背景色の設定）
+clearCanvas();
+
 // グリッドの表示
 showGrid();
 
+// キャンバスの背景色を取得する
+function getCanvasColor() {
+  return document.getElementById("background-color").value;
+}
+
+// 描画キャンバス、パターンキャンバスのクリア、背景色の設定
+function clearCanvas() {
+  // キャンバスのクリア
+  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
+
+  // 背景色の設定
+  const canvasColor = getCanvasColor();
+  contextDraw.fillStyle = canvasColor;
+  contextDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
+
+  // 背景色の一時保存
+  tmpCanvasColor = getCanvasColor();
+}
+
+// グリッド線の描画
 function showGrid() {
   // グリッドキャンバスのクリア
   contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
@@ -187,11 +214,8 @@ function savePattern(target) {
 }
 
 // イベントリスナーの追加
-// クリアボタンが押された時の処理、キャンパスをクリア
-document.getElementById("clear_btn").addEventListener("click", function(e) {
-  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
-  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
-});
+// クリアボタンが押された時
+document.getElementById("clear_btn").addEventListener("click", clearCanvas);
 
 // 表示サイズのラジオボタンを変更した時
 const elms = document.getElementsByClassName("size");
@@ -217,7 +241,7 @@ for(let i=0; i < saveElms.length; i++) {
 // グリッドチェックボックスを変更した時
 document.getElementById("grid").addEventListener("change", showGrid);
 
-// グリッドキャンバス上でマウスのボタンを押したとき
+// グリッドキャンバス上でマウスのボタンを押した時
 canvasGrid.addEventListener("mousedown", startDraw);
 // グリッドキャンバス上でマウスを移動した時
 canvasGrid.addEventListener("mousemove", draw);
@@ -225,3 +249,14 @@ canvasGrid.addEventListener("mousemove", draw);
 canvasGrid.addEventListener("mouseup", endDraw);
 // グリッドキャンバス上からマウスボタンが離れたとき
 canvasGrid.addEventListener("mouseleave", endDraw);
+
+// 色の変更時
+document.getElementById("background-color").addEventListener("change", function(e) {
+  if(confirm("作成した内容がクリアされますがよろしいですか。")) {
+    // はいの場合キャンバスのクリア
+    clearCanvas();
+  } else {
+    // キャンセルの場合、背景色にキャンバスクリア時に一時保存した背景色をセット
+    document.getElementById("background-color").value = tmpCanvasColor;
+  }
+});
