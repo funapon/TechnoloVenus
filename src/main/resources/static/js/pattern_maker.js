@@ -58,6 +58,7 @@ function startDraw(event) {
   // 始点をセット
   sx = event.clientX - canvasRect.left;
   sy = event.clientY - canvasRect.top;
+
 }
 
 function draw(event) {
@@ -101,7 +102,7 @@ function endDraw(event) {
   mouseDown = false;
 }
 
-function drawPattern() {
+function drawPattern(e) {
   // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
   const size = getSize();
 
@@ -135,11 +136,14 @@ function drawPattern() {
 
 // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
 function getSize() {
-  const sizeArr = [4, 8, 16];
+  // 画像サイズのラジオボタンを取得
+  const elms = document.getElementsByClassName("size");
 
-  for(let i in sizeArr) {
-    if(document.getElementById("size_" + sizeArr[i]).checked) {
-      return sizeArr[i];
+  // 選択されているラジオボタンのサイズを取得する
+  for(let i=0; i < elms.length; i++) {
+    const item = elms.item(i);
+    if(item.checked) {
+      return parseInt(item.dataset["size"]);
     }
   }
 }
@@ -158,19 +162,10 @@ function reverse(image, x, y, sx, sy){
   contextPattern.restore();
 }
 
-// キャンパスをクリア
-function clearPattern() {
-  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
-  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
-}
-
-// 
-function savePattern(n) {
-  // 保存するキャンバス（canvasまたはcanvasPattern)
-  let targetCanvas = canvasDraw;
-  if(n == 1) {
-    targetCanvas = canvasPattern;
-  }
+// 画像保存 
+function savePattern(target) {
+  // 保存するキャンバス
+  const targetCanvas = target;
 
   // 名前を付けて保存（ダウンロード）
   const filename = window.prompt("ファイル名を入力して下さい", "pattern.png");
@@ -190,3 +185,43 @@ function savePattern(n) {
     }
   }
 }
+
+// イベントリスナーの追加
+// クリアボタンが押された時の処理、キャンパスをクリア
+document.getElementById("clear_btn").addEventListener("click", function(e) {
+  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
+});
+
+// 表示サイズのラジオボタンを変更した時
+const elms = document.getElementsByClassName("size");
+// ラジオボタンを変更した時に描画キャンバスを再描画するイベントを追加
+for(let i=0; i < elms.length; i++) {
+  elms.item(i).addEventListener("change", drawPattern);
+}
+// 画像保存ボタンを押したとき
+const saveElms = document.getElementsByClassName("save");
+for(let i=0; i < saveElms.length; i++) {
+  saveElms.item(i).addEventListener("click", function(e) {
+    // 保存対象キャンバスをボタンのidから取得
+    const targetId = e.target.id;
+
+    if(targetId === "save_draw") {
+      savePattern("canvasDraw");
+    } else if(targetId === "save_pattern") {
+      savePattern("canvasPattern");
+    }
+  });
+}
+
+// グリッドチェックボックスを変更した時
+document.getElementById("grid").addEventListener("change", showGrid);
+
+// グリッドキャンバス上でマウスのボタンを押したとき
+canvasGrid.addEventListener("mousedown", startDraw);
+// グリッドキャンバス上でマウスを移動した時
+canvasGrid.addEventListener("mousemove", draw);
+// グリッドキャンバス上でマウスのボタンを離したとき
+canvasGrid.addEventListener("mouseup", endDraw);
+// グリッドキャンバス上からマウスボタンが離れたとき
+canvasGrid.addEventListener("mouseleave", endDraw);
