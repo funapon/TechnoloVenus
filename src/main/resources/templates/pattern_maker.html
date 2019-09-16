@@ -7,19 +7,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>地紋メーカー</title>
+  <title>パターンメーカー</title>
   <link rel="stylesheet" type="text/css" href="../static/css/pattern_maker.css" th:href="@{/css/pattern_maker.css}">
+  <link href="https://fonts.googleapis.com/css?family=Bad+Script&display=swap" rel="stylesheet">
 </head>
 <body>
-  <p>地紋メーカー</p>
+  <h1>Pattern Maker</h1>
   <input type="button" value="クリア" id="clear_btn">
-  <input type="button" value="地紋パーツを保存" class="save" id="save_draw">
-  <input type="radio" name="size" class="size" id="size_4" data-size="4" checked>4×4
-  <input type="radio" name="size" class="size" id="size_8" data-size="8">8×8
-  <input type="radio" name="size" class="size" id="size_16" data-size="16">16×16
-  <input type="button" value="地紋画像を保存" class="save" id="save_pattern">
+  <input type="button" value="パターンパーツを保存" class="save" id="save_draw">
+  <input type="button" value="パターン画像を保存" class="save" id="save_pattern">
+  <div class="size-group">
+    <input type="radio" name="size" class="size" id="size_4" data-size="4" checked>4×4
+    <input type="radio" name="size" class="size" id="size_8" data-size="8">8×8
+    <input type="radio" name="size" class="size" id="size_16" data-size="16">16×16
+  </div>
   <hr>
-  <div>
+  <div class="canvas-draw-group">
     <canvas id="canvasDraw" width="160" height="160"></canvas><br>
     <canvas id="canvasGrid" width="160" height="160"></canvas>
     <input type="checkbox" id="grid" checked>グリッド<br>

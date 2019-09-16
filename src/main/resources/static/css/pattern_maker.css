@@ -1,7 +1,36 @@
+h1 {
+  font-family: 'Bad Script', cursive;
+  font-size: 40px;
+}
+
+input[type="button"]{
+  color:#EA6088;
+  border-radius: 0%;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: 1.2s;
+  border: 2px solid #EA6088;
+  background-color: white;
+}
+input[type="button"]:hover {
+  color:white;
+  background-color: #EA6088;
+}
+
+div.size-group {
+  display: inline-block;
+  padding-left: 12px;
+}
+
+hr {
+  margin: 12px;
+}
+
 canvas {
   border: 1px solid #cccccc;
 }
-div {
+div.canvas-draw-group {
   position : relative;
   float: left;
   margin-right: 10px;
