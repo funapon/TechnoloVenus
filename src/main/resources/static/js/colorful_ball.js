@@ -1,51 +1,78 @@
-// ボールの数
+// キャンバス上のボールの数
 const numBalls = 65;
-const x = new Array(numBalls);
-const y = new Array(numBalls);
-const vx = new Array(numBalls);
-const vy = new Array(numBalls);
-const radius = new Array(numBalls);
-const c = new Array(numBalls);
 
-// 初期化
+// ボールの半径
+const ballRadius = new Array(numBalls);
+// ボールの半径最小値
+const ballRadiusMin = 25;
+// ボールの半径最大値
+const ballRadiusMax = 50;
+
+// ボールの中心座標
+const ballCenterX = new Array(numBalls);
+const ballCenterY = new Array(numBalls);
+
+// ボールの速度
+const ballVelocityX = new Array(numBalls);
+const ballVelocityY = new Array(numBalls);
+// ボールの速度最小値
+const ballVelocityMin = -2.5;
+// ボールの速度最大値
+const ballVelocityMax = 2.5;
+
+// ボールの色
+const ballColor = new Array(numBalls);
+// ボールの透明度、0～255で設定
+const ballAlpha = 85;
+
+// キャンバスの背景色
+const backGroundColor = 255;
+
+// 初期化処理
+// 一度だけ実行される
 function setup() {
   // キャンバスの作成
-  createCanvas(960, 540,);
+  createCanvas(960, 540);
   
-  // ボールの作成
+  // ボールの初期値を設定
   for (let i=0; i<numBalls; i++){
-    radius[i] = randomIntMinMax(25, 50);
-    x[i] = random(radius[i], width-radius[i]);
-    y[i] = random(radius[i], height-radius[i]);
-    vx[i] = random(-2.5, 2.5);
-    vy[i] = random(-2.5, 2.5);
-    c[i] = color(random(255), random(255), random(255), 85);
+    ballRadius[i] = randomIntMinMax(ballRadiusMin, ballRadiusMax);
+    // ボールがキャンバスの壁に埋まった状態でスタートしないように中心座標を設定、widthはキャンバスの幅、heightはキャンバスの高さ
+    ballCenterX[i] = random(ballRadius[i], width-ballRadius[i]);
+    ballCenterY[i] = random(ballRadius[i], height-ballRadius[i]);
+    ballVelocityX[i] = random(ballVelocityMin, ballVelocityMax);
+    ballVelocityY[i] = random(ballVelocityMin, ballVelocityMax);
+    ballColor[i] = color(random(255), random(255), random(255), ballAlpha);
   }
 }
 
 // メインループ処理
+// setupの実行後に繰り返し実行される
 function draw() {
-  background(255);
+  // キャンバスの背景色を設定
+  background(backGroundColor);
 
   for(let i=0; i<numBalls; i++) {
     // ボールの位置を更新
-    x[i] += vx[i];
-    y[i] += vy[i];
+    ballCenterX[i] += ballVelocityX[i];
+    ballCenterY[i] += ballVelocityY[i];
 
     // 左右の壁との当たり判定
-    if(x[i]-radius[i] <= 0 || x[i]+radius[i] >= width) {
-      vx[i] *= -1;
+    if(ballCenterX[i]-ballRadius[i] <= 0 || ballCenterX[i]+ballRadius[i] >= width) {
+      ballVelocityX[i] *= -1;
     }
 
     // 上下の壁との当たり判定
-    if(y[i]-radius[i] <= 0 || y[i]+radius[i] >= height) {
-      vy[i] *= -1;
+    if(ballCenterY[i]-ballRadius[i] <= 0 || ballCenterY[i]+ballRadius[i] >= height) {
+      ballVelocityY[i] *= -1;
     }
     
-    // ボールを描画
+    // ボールの枠線は無しにする
     noStroke();
-    fill(c[i]);
-    ellipse(x[i], y[i], 2*radius[i], 2*radius[i]);
+    // ボールの塗りつぶし色を設定する
+    fill(ballColor[i]);
+    // ボールを描画する
+    ellipse(ballCenterX[i], ballCenterY[i], 2*ballRadius[i], 2*ballRadius[i]);
   }
 }
 
