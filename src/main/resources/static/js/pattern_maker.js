@@ -1,66 +1,72 @@
 // 変数の宣言
 // 実際に模様を書くキャンバス（描画用キャンバス）
 const canvasDraw = document.getElementById("canvasDraw");
+// 描画機能にアクセスするための2Dコンテキストを取得
 const contextDraw = canvasDraw.getContext("2d");
 
 // 描画用キャンバス上に重ねるグリッド（グリッドキャンバス）
 const canvasGrid = document.getElementById("canvasGrid");
+// 描画機能にアクセスするための2Dコンテキストを取得
 const contextGrid = canvasGrid.getContext("2d");
 
 // 生成された地紋が表示されるキャンバス（パターンキャンバス）
 const canvasPattern = document.getElementById("canvasPattern");
+// 描画機能にアクセスするための2Dコンテキストを取得
 const contextPattern = canvasPattern.getContext("2d");
 
-// クリックされた場所の座標（始点）
-let sx;
-let sy;
+// グリッドの色
+const gridColor = "#CCCCCC";
+
+// 描画するラインの始点
+let startX;
+let startY;
 
 // マウスが押されているかの状態
-let mouseDown = false;
+let mouseDownStatus = false;
 
-// キャンバスの背景色一時保存用;
-let tmpCanvasColor;
+// 描画用キャンバスの背景色一時保存用
+let tmpCanvasDrawColor;
 
-// キャンバスのクリア（描画キャンバスの背景色の設定）
-clearCanvas();
-
-// グリッドの表示
+// ページ読み込み時に描画用キャンバスを初期化してグリッドを表示する
+setupCanvasDraw();
 showGrid();
 
-// キャンバスの背景色を取得する
-function getCanvasColor() {
+
+// 描画用キャンバスの初期化処理
+function setupCanvasDraw() {
+  // 描画用キャンバスのクリア
+  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+  // パターンキャンバスの描画内容が残ってしまうので、パターンキャンバスもクリアする
+  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
+
+  // 描画用キャンバスの背景色を取得
+  const canvasDrawColor = getCanvasDrawColor();
+  // 塗りつぶしのスタイルに取得した背景色を設定する
+  contextDraw.fillStyle = canvasDrawColor;
+  // 描画用キャンバスの塗りつぶしを実行する
+  contextDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
+
+  // 背景色を一時保存する
+  tmpCanvasDrawColor = canvasDrawColor;
+}
+
+// 描画用キャンバスの背景色を取得する処理
+function getCanvasDrawColor() {
   return document.getElementById("background-color").value;
 }
 
-// 描画キャンバス、パターンキャンバスのクリア、背景色の設定
-function clearCanvas() {
-  // キャンバスのクリア
-  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
-  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
-
-  // 背景色の設定
-  const canvasColor = getCanvasColor();
-  contextDraw.fillStyle = canvasColor;
-  contextDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
-
-  // 背景色の一時保存
-  tmpCanvasColor = getCanvasColor();
-}
-
-// グリッド線の描画
+// 描画用キャンバスにグリッド線を描画する処理
 function showGrid() {
-  // グリッドキャンバスのクリア
-  contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
-
-  // グリッドの描画
+  // 画面項目「グリッド」にチェックありの場合、グリッドを表示する
   if (document.getElementById("grid").checked) {
-    // グリッド線の色を指定
-    contextGrid.strokeStyle = "#CCCCCC";
-    // 線を点線にする
+    // 線の色を設定する
+    contextGrid.strokeStyle = gridColor;
+    // 線の種類を点線にする、線の長さ、空白の長さの順で引数を指定
     contextGrid.setLineDash([2,2]);
     // 現在のパスをリセットする
     contextGrid.beginPath();
-    // グリット戦の間隔（キャンバス幅の1/4）
+   
+    // グリット線の間隔（キャンバス幅の1/4）
     const w = canvasGrid.width / 4;
 
     // グリッド線を描画する
@@ -74,23 +80,27 @@ function showGrid() {
     }
     // 作成したパスの描画
     contextGrid.stroke();
+  } 
+  // チェックなしの場合、グリッドを非表示にする
+  else {
+    contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
   }
 }
 
 function startDraw(event) {
   // マウスボタンが押された
-  mouseDown = true;
+  mouseDownStatus = true;
   // 描画用キャンバスの矩形情報を取得
   const canvasRect = canvasDraw.getBoundingClientRect();
   // 始点をセット
-  sx = event.clientX - canvasRect.left;
-  sy = event.clientY - canvasRect.top;
+  startX = event.clientX - canvasRect.left;
+  startY = event.clientY - canvasRect.top;
 
 }
 
 function draw(event) {
   // マウスボタンが押されているとき描画
-  if (mouseDown) {
+  if (mouseDownStatus) {
     // 描画用キャンバスの矩形情報を取得
     const canvasRect = canvasDraw.getBoundingClientRect();
     // 終点をセット
@@ -109,15 +119,15 @@ function draw(event) {
     // 現在のパスをリセットする
     contextDraw.beginPath();
     // パスの始点を指定する
-    contextDraw.moveTo(sx, sy);
+    contextDraw.moveTo(startX, startY);
     // 指定した座標までパスを作成
     contextDraw.lineTo(ex, ey);
     // 作成したパスの描画
     contextDraw.stroke();
 
     // 終点を始点にセットする
-    sx = ex;
-    sy = ey;
+    startX = ex;
+    startY = ey;
 
     // 地紋画像を描画
     drawPattern();
@@ -126,7 +136,7 @@ function draw(event) {
 
 function endDraw(event) {
   // マウスボタンが離された
-  mouseDown = false;
+  mouseDownStatus = false;
 }
 
 function drawPattern(e) {
@@ -215,7 +225,7 @@ function savePattern(target) {
 
 // イベントリスナーの追加
 // クリアボタンが押された時
-document.getElementById("clear_btn").addEventListener("click", clearCanvas);
+document.getElementById("clear_btn").addEventListener("click", setupCanvasDraw);
 
 // 表示サイズのラジオボタンを変更した時
 const elms = document.getElementsByClassName("size");
@@ -254,9 +264,9 @@ canvasGrid.addEventListener("mouseleave", endDraw);
 document.getElementById("background-color").addEventListener("change", function(e) {
   if(confirm("作成した内容がクリアされますがよろしいですか。")) {
     // はいの場合キャンバスのクリア
-    clearCanvas();
+    setupCanvasDraw();
   } else {
     // キャンセルの場合、背景色にキャンバスクリア時に一時保存した背景色をセット
-    document.getElementById("background-color").value = tmpCanvasColor;
+    document.getElementById("background-color").value = tmpCanvasDrawColor;
   }
 });
