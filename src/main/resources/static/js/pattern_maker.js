@@ -21,8 +21,8 @@ const gridColor = "#CCCCCC";
 let startX;
 let startY;
 
-// マウスが押されているかの状態
-let mouseDownStatus = false;
+// マウスのボタンが押されているかの状態
+let isMouseDown = false;
 
 // 描画用キャンバスの背景色一時保存用
 let tmpCanvasDrawColor;
@@ -65,18 +65,23 @@ function showGrid() {
     contextGrid.setLineDash([2,2]);
     // 現在のパスをリセットする
     contextGrid.beginPath();
-   
+    
     // グリット線の間隔（キャンバス幅の1/4）
-    const w = canvasGrid.width / 4;
+    const gridWidth = canvasGrid.width / 4;
 
     // グリッド線を描画する
     for(let i=1; i<4; i++) {
-      // 縦線のパスを作成
-      contextGrid.moveTo(i*w, 0);
-      contextGrid.lineTo(i*w, canvasGrid.height);
-      // 横線のパスを作成
-      contextGrid.moveTo(0, i*w);
-      contextGrid.lineTo(canvasGrid.width, i*w);
+      // 縦のグリッド線を描画
+      // 開始座標の移動
+      contextGrid.moveTo(i*gridWidth, 0);
+      // 現在の位置から指定座標までグリッド線を引く
+      contextGrid.lineTo(i*gridWidth, canvasGrid.height);
+      
+      // 横のグリッド線を描画
+      // 開始座標の移動
+      contextGrid.moveTo(0, i*gridWidth);
+      // 現在の一から指定座標までグリッド線を引く
+      contextGrid.lineTo(canvasGrid.width, i*gridWidth);
     }
     // 作成したパスの描画
     contextGrid.stroke();
@@ -89,7 +94,7 @@ function showGrid() {
 
 function startDraw(event) {
   // マウスボタンが押された
-  mouseDownStatus = true;
+  isMouseDown = true;
   // 描画用キャンバスの矩形情報を取得
   const canvasRect = canvasDraw.getBoundingClientRect();
   // 始点をセット
@@ -100,7 +105,7 @@ function startDraw(event) {
 
 function draw(event) {
   // マウスボタンが押されているとき描画
-  if (mouseDownStatus) {
+  if (isMouseDown) {
     // 描画用キャンバスの矩形情報を取得
     const canvasRect = canvasDraw.getBoundingClientRect();
     // 終点をセット
@@ -136,7 +141,7 @@ function draw(event) {
 
 function endDraw(event) {
   // マウスボタンが離された
-  mouseDownStatus = false;
+  isMouseDown = false;
 }
 
 function drawPattern(e) {
