@@ -69,7 +69,7 @@ function showGrid() {
     // グリット線の間隔（キャンバス幅の1/4）
     const gridWidth = canvasGrid.width / 4;
 
-    // グリッド線を描画する
+    // グリッド線の描画設定
     for(let i=1; i<4; i++) {
       // 縦のグリッド線を描画
       // 開始座標の移動
@@ -83,7 +83,7 @@ function showGrid() {
       // 現在の一から指定座標までグリッド線を引く
       contextGrid.lineTo(canvasGrid.width, i*gridWidth);
     }
-    // 作成したパスの描画
+    // グリッド線の描画
     contextGrid.stroke();
   } 
   // チェックなしの場合、グリッドを非表示にする
@@ -93,19 +93,18 @@ function showGrid() {
 }
 
 function startDraw(event) {
-  // マウスボタンが押された
+  // マウスボタンの状態を更新
   isMouseDown = true;
   // 描画用キャンバスの矩形情報を取得
   const canvasRect = canvasDraw.getBoundingClientRect();
   // 始点をセット
   startX = event.clientX - canvasRect.left;
   startY = event.clientY - canvasRect.top;
-
 }
 
 function draw(event) {
   // マウスボタンが押されているとき描画
-  if (isMouseDown) {
+  if(isMouseDown) {
     // 描画用キャンバスの矩形情報を取得
     const canvasRect = canvasDraw.getBoundingClientRect();
     // 終点をセット
@@ -233,18 +232,22 @@ function savePattern(target) {
 document.getElementById("clear_btn").addEventListener("click", setupCanvasDraw);
 
 // 表示サイズのラジオボタンを変更した時
-const elms = document.getElementsByClassName("size");
-// ラジオボタンを変更した時に描画キャンバスを再描画するイベントを追加
-for(let i=0; i < elms.length; i++) {
-  elms.item(i).addEventListener("change", drawPattern);
+// 表示サイズのラジオボタンのHTML1Collectionを取得
+const sizeElms = document.getElementsByClassName("size");
+// 取得した要素に対し1件ずつイベント追加
+for(let i=0; i < sizeElms.length; i++) {
+  sizeElms[i].addEventListener("change", drawPattern);
 }
-// 画像保存ボタンを押したとき
+// 画像保存ボタンを押した時
+// 画像保存ボタンのHTMLCollectionを取得
 const saveElms = document.getElementsByClassName("save");
+// 取得した要素に対し1兼ずつイベント追加
 for(let i=0; i < saveElms.length; i++) {
   saveElms.item(i).addEventListener("click", function(e) {
     // 保存対象キャンバスをボタンのidから取得
     const targetId = e.target.id;
 
+    // 対象キャンバスを画像として保存する
     if(targetId === "save_draw") {
       savePattern("canvasDraw");
     } else if(targetId === "save_pattern") {
@@ -252,9 +255,6 @@ for(let i=0; i < saveElms.length; i++) {
     }
   });
 }
-
-// グリッドチェックボックスを変更した時
-document.getElementById("grid").addEventListener("change", showGrid);
 
 // グリッドキャンバス上でマウスのボタンを押した時
 canvasGrid.addEventListener("mousedown", startDraw);
@@ -265,13 +265,16 @@ canvasGrid.addEventListener("mouseup", endDraw);
 // グリッドキャンバス上からマウスボタンが離れたとき
 canvasGrid.addEventListener("mouseleave", endDraw);
 
-// 色の変更時
+// グリッドチェックボックスを変更した時
+document.getElementById("grid").addEventListener("change", showGrid);
+
+// 描画用キャンバスの背景色の変更時
 document.getElementById("background-color").addEventListener("change", function(e) {
   if(confirm("作成した内容がクリアされますがよろしいですか。")) {
     // はいの場合キャンバスのクリア
     setupCanvasDraw();
   } else {
-    // キャンセルの場合、背景色にキャンバスクリア時に一時保存した背景色をセット
+    // キャンセルの場合、背景色に前回一時保存した背景色をセット
     document.getElementById("background-color").value = tmpCanvasDrawColor;
   }
 });
