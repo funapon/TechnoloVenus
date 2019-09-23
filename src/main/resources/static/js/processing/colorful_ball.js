@@ -6,15 +6,16 @@ const balls = new Array(NUM_BALL);
 
 class Ball {
   // 半径最小値
-  RADIUS_MIN;
+  static RADIUS_MIN = 25;
   // 半径最大値
-  RADIUS_MAX;
+  static RADIUS_MAX = 50;
   // 移動速度最小値
-  VELOCITY_MIN;
+  static VELOCITY_MIN = -2.5;
   // 移動速度最大値
-  VELOCITY_MAX;
+  static VELOCITY_MAX = 2.5;
   // 透明度、0～255で設定
-  ALPHA;
+  static ALPHA = 85;
+  
   // 半径
   radius;
   // 中心座標
@@ -27,20 +28,14 @@ class Ball {
   color;
 
   constructor(width, height) {
-    this.RADIUS_MAX = 50;
-    this.RADIUS_MIN = 25;
-    this.VELOCITY_MIN = -2.5;
-    this.VELOCITY_MAX = 2.5;
-    this.ALPHA = 85;
-
     this.radius = 
-      Math.floor(Math.random() * (this.RADIUS_MAX + 1 - this.RADIUS_MIN)) + this.RADIUS_MIN;
+      Math.floor(Math.random() * (Ball.RADIUS_MAX + 1 - Ball.RADIUS_MIN)) + Ball.RADIUS_MIN;
     // ボールがキャンバスの壁に埋まった状態でスタートしないように中心座標を設定、widthはキャンバスの幅、heightはキャンバスの高さ
     this.centerX = random(this.radius, width - this.radius);
     this.centerY = random(this.radius, height - this.radius);
-    this.velocityX = random(this.VELOCITY_MIN, this.VELOCITY_MAX);
-    this.velocityY = random(this.VELOCITY_MIN, this.VELOCITY_MAX);
-    this.color = color(random(255), random(255), random(255), this.ALPHA);
+    this.velocityX = random(Ball.VELOCITY_MIN, Ball.VELOCITY_MAX);
+    this.velocityY = random(Ball.VELOCITY_MIN, Ball.VELOCITY_MAX);
+    this.color = color(random(255), random(255), random(255), Ball.ALPHA);
   }
 
   // ボールの位置を更新
