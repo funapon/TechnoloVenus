@@ -71,27 +71,28 @@ function showGrid() {
 
     // グリッド線の描画設定
     for(let i=1; i<4; i++) {
-      // 縦のグリッド線を描画
+      // 縦のグリッド線描画設定
       // 開始座標の移動
       contextGrid.moveTo(i*gridWidth, 0);
-      // 現在の位置から指定座標までグリッド線を引く
+      // 現在の位置から指定座標までグリッド線のパスを設定する
       contextGrid.lineTo(i*gridWidth, canvasGrid.height);
       
-      // 横のグリッド線を描画
+      // 横のグリッド線描画設定
       // 開始座標の移動
       contextGrid.moveTo(0, i*gridWidth);
-      // 現在の一から指定座標までグリッド線を引く
+      // 現在の一から指定座標までグリッド線のパスを設定する
       contextGrid.lineTo(canvasGrid.width, i*gridWidth);
     }
     // グリッド線の描画
     contextGrid.stroke();
   } 
-  // チェックなしの場合、グリッドを非表示にする
+  // チェックなしの場合、グリッド線を非表示にする
   else {
     contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
   }
 }
 
+// 描画用キャンバスへ描画するための事前処理
 function startDraw(event) {
   // マウスボタンの状態を更新
   isMouseDown = true;
@@ -102,14 +103,15 @@ function startDraw(event) {
   startY = event.clientY - canvasRect.top;
 }
 
+// 描画用キャンバスへの描画処理
 function draw(event) {
-  // マウスボタンが押されているとき描画
+  // マウスボタンが押されている場合に描画する
   if(isMouseDown) {
     // 描画用キャンバスの矩形情報を取得
     const canvasRect = canvasDraw.getBoundingClientRect();
     // 終点をセット
-    const ex = event.clientX - canvasRect.left;
-    const ey = event.clientY - canvasRect.top;
+    const endX = event.clientX - canvasRect.left;
+    const endY = event.clientY - canvasRect.top;
     
     // 描画する線の設定
     // 線端の形を丸にする
@@ -124,25 +126,27 @@ function draw(event) {
     contextDraw.beginPath();
     // パスの始点を指定する
     contextDraw.moveTo(startX, startY);
-    // 指定した座標までパスを作成
-    contextDraw.lineTo(ex, ey);
+    // 始点から引数の終点座標までパスを作成
+    contextDraw.lineTo(endX, endY);
     // 作成したパスの描画
     contextDraw.stroke();
 
     // 終点を始点にセットする
-    startX = ex;
-    startY = ey;
+    startX = endX;
+    startY = endY;
 
-    // 地紋画像を描画
+    // パターンキャンバスに描画する
     drawPattern();
   }
 }
 
+// 描画用キャンバスへの描画を終了する処理
 function endDraw(event) {
-  // マウスボタンが離された
+  // マウスボタンの状態を更新
   isMouseDown = false;
 }
 
+// パターンキャンバスへの描画処理
 function drawPattern(e) {
   // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
   const size = getSize();
@@ -151,7 +155,7 @@ function drawPattern(e) {
   canvasPattern.width = size * canvasDraw.width;
   canvasPattern.height = size * canvasDraw.height;
 
-  // 地紋パーツを取得
+  // 描画用キャンバスの描画内容を画像として取得
   // 画像オブジェクトの作成
   const image = new Image();
   // 描画用キャンバスの内容を画像に設定
@@ -160,8 +164,8 @@ function drawPattern(e) {
   // 上下左右反転繰り返し描画
   // 画像を取得した際に実行
   image.onload = function() {
-    for(let x=0; x<size/2; x++) {
-      for(let y=0; y<size/2; y++) {
+    for(let x=0; x < size / 2; x++) {
+      for(let y=0; y < size / 2; y++) {
         // 画像をそのまま表示
         reverse(image, x, y, 1, 1);
         // 右隣に左右反転して表示
@@ -180,7 +184,7 @@ function getSize() {
   // 画像サイズのラジオボタンを取得
   const elms = document.getElementsByClassName("size");
 
-  // 選択されているラジオボタンのサイズを取得する
+  // 選択されているサイズを取得する
   for(let i=0; i < elms.length; i++) {
     const item = elms.item(i);
     if(item.checked) {
@@ -189,11 +193,11 @@ function getSize() {
   }
 }
 
-// パターンキャンバスに描画用キャンバスの画像を表示する
+// 画像をパラメータの値で反転して表示する処理
 function reverse(image, x, y, sx, sy){
   // 現在の描画スタイル（線の色や太さ）を保存
   contextPattern.save();
-  // キャンバスを移動
+  // 描画する位置を移動
   contextPattern.translate(x*2*canvasDraw.width, y*2*canvasDraw.height);
   // 引数にマイナスの値が指定された場合キャンバスを反転
   contextPattern.scale(sx, sy);
