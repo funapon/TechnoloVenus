@@ -167,13 +167,13 @@ function drawPattern(e) {
     for(let x=0; x < size / 2; x++) {
       for(let y=0; y < size / 2; y++) {
         // 画像をそのまま表示
-        reverse(image, x, y, 1, 1);
+        reverseImage(image, x, y, 1, 1);
         // 右隣に左右反転して表示
-        reverse(image, x+1, y, -1, 1);
+        reverseImage(image, x+1, y, -1, 1);
         // 下に上下反転して表示
-        reverse(image, x, y+1, 1, -1);
+        reverseImage(image, x, y+1, 1, -1);
         // 右斜め下に上下左右反転して表示
-        reverse(image, x+1, y+1, -1, -1);
+        reverseImage(image, x+1, y+1, -1, -1);
       }
     }
   }
@@ -194,11 +194,11 @@ function getSize() {
 }
 
 // 画像をパラメータの値で反転して表示する処理
-function reverse(image, x, y, sx, sy){
+function reverseImage(image, x, y, sx, sy) {
   // 現在の描画スタイル（線の色や太さ）を保存
   contextPattern.save();
   // 描画する位置を移動
-  contextPattern.translate(x*2*canvasDraw.width, y*2*canvasDraw.height);
+  contextPattern.translate(x * 2 * canvasDraw.width, y * 2 * canvasDraw.height);
   // 引数にマイナスの値が指定された場合キャンバスを反転
   contextPattern.scale(sx, sy);
   // 幅と高さを指定してイメージを描画する
@@ -207,7 +207,7 @@ function reverse(image, x, y, sx, sy){
   contextPattern.restore();
 }
 
-// 画像保存 
+// キャンバスの画像を保存する処理 
 function savePattern(target) {
   // 保存するキャンバス
   const targetCanvas = target;
@@ -232,6 +232,7 @@ function savePattern(target) {
 }
 
 // イベントリスナーの追加
+
 // クリアボタンが押された時
 document.getElementById("clear_btn").addEventListener("click", setupCanvasDraw);
 
@@ -240,12 +241,13 @@ document.getElementById("clear_btn").addEventListener("click", setupCanvasDraw);
 const sizeElms = document.getElementsByClassName("size");
 // 取得した要素に対し1件ずつイベント追加
 for(let i=0; i < sizeElms.length; i++) {
-  sizeElms[i].addEventListener("change", drawPattern);
+  // sizeElms[i].addEventListener("change", drawPattern);
+  sizeElms.item(i).addEventListener("change", drawPattern);
 }
 // 画像保存ボタンを押した時
 // 画像保存ボタンのHTMLCollectionを取得
 const saveElms = document.getElementsByClassName("save");
-// 取得した要素に対し1兼ずつイベント追加
+// 取得した要素に対し1件ずつイベント追加
 for(let i=0; i < saveElms.length; i++) {
   saveElms.item(i).addEventListener("click", function(e) {
     // 保存対象キャンバスをボタンのidから取得
@@ -253,9 +255,9 @@ for(let i=0; i < saveElms.length; i++) {
 
     // 対象キャンバスを画像として保存する
     if(targetId === "save_draw") {
-      savePattern("canvasDraw");
+      savePattern(canvasDraw);
     } else if(targetId === "save_pattern") {
-      savePattern("canvasPattern");
+      savePattern(canvasPattern);
     }
   });
 }
