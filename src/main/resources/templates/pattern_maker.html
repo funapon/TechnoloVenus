@@ -17,18 +17,18 @@
   <input type="button" value="パターンパーツを保存" class="save" id="save_draw">
   <input type="button" value="パターン画像を保存" class="save" id="save_pattern">
   <div class="size-group">
-    <input type="radio" name="size" class="size" id="size_4" data-size="4" checked>4×4
-    <input type="radio" name="size" class="size" id="size_8" data-size="8">8×8
-    <input type="radio" name="size" class="size" id="size_16" data-size="16">16×16
+    <input type="radio" name="size" class="size" id="size_4" data-size="4" checked><span>4×4</span>
+    <input type="radio" name="size" class="size" id="size_8" data-size="8"><span>8×8</span>
+    <input type="radio" name="size" class="size" id="size_16" data-size="16"><span>16×16</span>
   </div>
   <hr>
   <div class="canvas-draw-group">
     <canvas id="canvasDraw" width="160" height="160"></canvas><br>
     <canvas id="canvasGrid" width="160" height="160"></canvas>
-    <input type="checkbox" id="grid" checked>グリッド<br>
-    ペンの太さ：<input type="number" id="pen" value="5" min="1" max="10"><br>
-    ペンの色：<input type="color" id="color" value="#c0c0c0"><br>
-    背景の色：<input type="color" id="background-color" value="#FFFFFD"><br>
+    <input type="checkbox" id="grid" checked><span>グリッド</span><br>
+    <span>ペンの太さ：</span><input type="number" id="pen" value="5" min="1" max="10"><br>
+    <span>ペンの色：</span><input type="color" id="color" value="#c0c0c0"><br>
+    <span>背景の色：</span><input type="color" id="background-color" value="#FFFFFD"><br>
   </div>
   <canvas id="canvasPattern"></canvas>
   <script src="../static/js/pattern_maker.js" th:src="@{/js/pattern_maker.js}"></script>
