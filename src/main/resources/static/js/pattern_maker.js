@@ -15,7 +15,7 @@ const canvasPattern = document.getElementById("canvasPattern");
 const contextPattern = canvasPattern.getContext("2d");
 
 // グリッドの色
-const gridColor = "#CCCCCC";
+const GRID_COLOR = "#CCCCCC";
 
 // 描画するラインの始点
 let startX;
@@ -55,41 +55,46 @@ function getCanvasDrawColor() {
   return document.getElementById("background-color").value;
 }
 
-// 描画用キャンバスにグリッド線を描画する処理
+// 描画用キャンバスのグリッド線の表示非表示を判定する処理
 function showGrid() {
   // 画面項目「グリッド」にチェックありの場合、グリッドを表示する
   if (document.getElementById("grid").checked) {
-    // 線の色を設定する
-    contextGrid.strokeStyle = gridColor;
-    // 線の種類を点線にする、線の長さ、空白の長さの順で引数を指定
-    contextGrid.setLineDash([2,2]);
-    // 現在のパスをリセットする
-    contextGrid.beginPath();
-    
-    // グリット線の間隔（キャンバス幅の1/4）
-    const gridWidth = canvasGrid.width / 4;
-
-    // グリッド線の描画設定
-    for(let i=1; i<4; i++) {
-      // 縦のグリッド線描画設定
-      // 開始座標の移動
-      contextGrid.moveTo(i*gridWidth, 0);
-      // 現在の位置から指定座標までグリッド線のパスを設定する
-      contextGrid.lineTo(i*gridWidth, canvasGrid.height);
-      
-      // 横のグリッド線描画設定
-      // 開始座標の移動
-      contextGrid.moveTo(0, i*gridWidth);
-      // 現在の一から指定座標までグリッド線のパスを設定する
-      contextGrid.lineTo(canvasGrid.width, i*gridWidth);
-    }
-    // グリッド線の描画
-    contextGrid.stroke();
+    strokeGrid();
   } 
   // チェックなしの場合、グリッド線を非表示にする
   else {
     contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
   }
+}
+
+// 描画用キャンバスにグリッド線を描画する処理
+function strokeGrid() {
+  // 線の色を設定する
+  contextGrid.strokeStyle = GRID_COLOR;
+  // 線の種類を点線にする、線の長さ、空白の長さの順で引数を指定
+  contextGrid.setLineDash([2,2]);
+  // 現在のパスをリセットする
+  contextGrid.beginPath();
+
+  // グリット線の間隔（キャンバス幅の1/4）
+  const gridWidth = canvasGrid.width / 4;
+
+  // グリッド線の描画設定
+  for(let i=1; i<4; i++) {
+    // 縦のグリッド線描画設定
+    // 開始座標の移動
+    contextGrid.moveTo(i*gridWidth, 0);
+    // 現在の位置から指定座標までグリッド線のパスを設定する
+    contextGrid.lineTo(i*gridWidth, canvasGrid.height);
+    
+    // 横のグリッド線描画設定
+    // 開始座標の移動
+    contextGrid.moveTo(0, i*gridWidth);
+    // 現在の一から指定座標までグリッド線のパスを設定する
+    contextGrid.lineTo(canvasGrid.width, i*gridWidth);
+  }
+  // グリッド線の描画
+  contextGrid.stroke();
 }
 
 // 描画用キャンバスへ描画するための事前処理
