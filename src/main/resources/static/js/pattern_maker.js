@@ -28,12 +28,12 @@ let isMouseDown = false;
 let tmpCanvasDrawColor;
 
 // ページ読み込み時に描画用キャンバスを初期化してグリッドを表示する
-setupCanvasDraw();
+initCanvasDraw();
 showGrid();
 
 
 // 描画用キャンバスの初期化処理
-function setupCanvasDraw() {
+function initCanvasDraw() {
   // 描画用キャンバスのクリア
   contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
   // パターンキャンバスの描画内容が残ってしまうので、パターンキャンバスもクリアする
@@ -234,7 +234,7 @@ function savePattern(target) {
 // イベントリスナーの追加
 
 // クリアボタンが押された時
-document.getElementById("clear_btn").addEventListener("click", setupCanvasDraw);
+document.getElementById("clear_btn").addEventListener("click", initCanvasDraw);
 
 // 表示サイズのラジオボタンを変更した時
 // 表示サイズのラジオボタンのHTML1Collectionを取得
@@ -278,7 +278,7 @@ document.getElementById("grid").addEventListener("change", showGrid);
 document.getElementById("background-color").addEventListener("change", function(e) {
   if(confirm("作成した内容がクリアされますがよろしいですか。")) {
     // はいの場合キャンバスのクリア
-    setupCanvasDraw();
+    initCanvasDraw();
   } else {
     // キャンセルの場合、背景色に前回一時保存した背景色をセット
     document.getElementById("background-color").value = tmpCanvasDrawColor;
