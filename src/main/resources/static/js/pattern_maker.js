@@ -111,38 +111,38 @@ function startDraw(event) {
 // 描画用キャンバスへの描画処理
 function draw(event) {
   // マウスボタンが押されている場合に描画する
-  if(isMouseDown) {
-    // 描画用キャンバスの矩形情報を取得
-    const canvasRect = canvasDraw.getBoundingClientRect();
-    // 終点をセット
-    const endX = event.clientX - canvasRect.left;
-    const endY = event.clientY - canvasRect.top;
-    
-    // 描画する線の設定
-    // 線端の形を丸にする
-    contextDraw.lineCap = "round";
-    // 線の太さを画面から取得してセットする
-    contextDraw.lineWidth = document.getElementById("pen").value;
-    // 線の色を画面から取得してセットする
-    contextDraw.strokeStyle = document.getElementById("color").value;
+  if(isMouseDown === false) return;
+  
+  // 描画用キャンバスの矩形情報を取得
+  const canvasRect = canvasDraw.getBoundingClientRect();
+  // 終点をセット
+  const endX = event.clientX - canvasRect.left;
+  const endY = event.clientY - canvasRect.top;
+  
+  // 描画する線の設定
+  // 線端の形を丸にする
+  contextDraw.lineCap = "round";
+  // 線の太さを画面から取得してセットする
+  contextDraw.lineWidth = document.getElementById("pen").value;
+  // 線の色を画面から取得してセットする
+  contextDraw.strokeStyle = document.getElementById("color").value;
 
-    // 線を描画する
-    // 現在のパスをリセットする
-    contextDraw.beginPath();
-    // パスの始点を指定する
-    contextDraw.moveTo(startX, startY);
-    // 始点から引数の終点座標までパスを作成
-    contextDraw.lineTo(endX, endY);
-    // 作成したパスの描画
-    contextDraw.stroke();
+  // 線を描画する
+  // 現在のパスをリセットする
+  contextDraw.beginPath();
+  // パスの始点を指定する
+  contextDraw.moveTo(startX, startY);
+  // 始点から引数の終点座標までパスを作成
+  contextDraw.lineTo(endX, endY);
+  // 作成したパスの描画
+  contextDraw.stroke();
 
-    // 終点を始点にセットする
-    startX = endX;
-    startY = endY;
+  // 終点を始点にセットする
+  startX = endX;
+  startY = endY;
 
-    // パターンキャンバスに描画する
-    drawPattern();
-  }
+  // パターンキャンバスに描画する
+  drawPattern();
 }
 
 // 描画用キャンバスへの描画を終了する処理
