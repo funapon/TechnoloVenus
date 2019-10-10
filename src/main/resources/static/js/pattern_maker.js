@@ -73,13 +73,14 @@ class Pattern {
   }
 }
 
-// ページ読み込み時に描画用キャンバスを初期化してグリッドを表示する
-initCanvasDraw();
-showGrid();
-
+// オブジェクトの作成
 const draw = new Draw();
 const grid = new Grid();
 const pattern = new Pattern();
+
+// ページ読み込み時に描画用キャンバスを初期化してグリッドを表示する
+initCanvasDraw();
+showGrid();
 
 // 描画用キャンバスの初期化処理
 function initCanvasDraw() {
