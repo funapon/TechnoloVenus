@@ -1,22 +1,3 @@
-// 変数の宣言
-// 実際に模様を書くキャンバス（描画用キャンバス）
-const canvasDraw = document.getElementById("canvasDraw");
-// 描画機能にアクセスするための2Dコンテキストを取得
-const contextDraw = canvasDraw.getContext("2d");
-
-// 描画用キャンバス上に重ねるグリッド（グリッドキャンバス）
-const canvasGrid = document.getElementById("canvasGrid");
-// 描画機能にアクセスするための2Dコンテキストを取得
-const contextGrid = canvasGrid.getContext("2d");
-
-// 生成された地紋が表示されるキャンバス（パターンキャンバス）
-const canvasPattern = document.getElementById("canvasPattern");
-// 描画機能にアクセスするための2Dコンテキストを取得
-const contextPattern = canvasPattern.getContext("2d");
-
-// グリッドの色
-const GRID_COLOR = "#CCCCCC";
-
 // 描画するラインの始点
 let startX;
 let startY;
@@ -27,24 +8,92 @@ let isMouseDown = false;
 // 描画用キャンバスの背景色一時保存用
 let tmpCanvasDrawColor;
 
+class Draw {
+  // 実際に模様を書くキャンバス（描画用キャンバス）
+  canvasDraw;
+  // 描画機能にアクセスするための2Dコンテキスト
+  contextDraw;
+  // 描画用キャンバスの横幅
+  width;
+  // 描画用キャンバスの高さ
+  height;
+
+  constructor() {
+    this.canvasDraw = document.getElementById("canvasDraw");
+    this.contextDraw = this.canvasDraw.getContext("2d");
+    this.width = this.canvasDraw.width;
+    this.height = this.canvasDraw.height;  
+  }
+
+  // キャンバスのクリア
+  clearCanvas() {
+    this.contextDraw.clearRect(0, 0, this.width, this.height);
+  }
+
+  // 塗りつぶしのスタイルに取得した背景色を設定する
+  setFillColor(color) {
+    this.contextDraw.fillStyle = color;
+  }
+
+  // キャンバスの塗りつぶしを実行する
+  fillCanvas() {
+    this.contextDraw.fillRect(0, 0, this.width, this.height);
+  }
+}
+
+class Grid {
+  // グリッドの色
+  static GRID_COLOR = "#CCCCCC";
+
+  // 描画用キャンバス上に重ねるグリッド（グリッドキャンバス）
+  canvasGrid;
+  // 描画機能にアクセスするための2Dコンテキスト
+  contextGrid;
+
+  constructor() {
+    this.canvasGrid = document.getElementById("canvasGrid");
+    this.contextGrid = this.canvasGrid.getContext("2d");
+  }
+}
+
+class Pattern {
+  // 生成された地紋が表示されるキャンバス（パターンキャンバス）
+  canvasPattern;
+  // 描画機能にアクセスするための2Dコンテキスト
+  contextPattern;
+  
+  constructor() {
+  this.canvasPattern = document.getElementById("canvasPattern");
+  this.contextPattern = this.canvasPattern.getContext("2d");
+  }
+
+  // キャンバスのクリア
+  clearCanvas() {
+    this.contextPattern.clearRect(0, 0, this.canvasPattern.width, this.canvasPattern.height);
+  }
+}
+
 // ページ読み込み時に描画用キャンバスを初期化してグリッドを表示する
 initCanvasDraw();
 showGrid();
 
+const draw = new Draw();
+const grid = new Grid();
+const pattern = new Pattern();
 
 // 描画用キャンバスの初期化処理
 function initCanvasDraw() {
   // 描画用キャンバスのクリア
-  contextDraw.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+  draw.clearCanvas();
   // パターンキャンバスの描画内容が残ってしまうので、パターンキャンバスもクリアする
-  contextPattern.clearRect(0, 0, canvasPattern.width, canvasPattern.height);
+  pattern.clearCanvas();
 
   // 描画用キャンバスの背景色を取得
   const canvasDrawColor = getCanvasDrawColor();
   // 塗りつぶしのスタイルに取得した背景色を設定する
-  contextDraw.fillStyle = canvasDrawColor;
+  draw.setFillColor(canvasDrawColor);
   // 描画用キャンバスの塗りつぶしを実行する
-  contextDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
+  draw.fillCanvas();
 
   // 背景色を一時保存する
   tmpCanvasDrawColor = canvasDrawColor;
@@ -54,6 +103,11 @@ function initCanvasDraw() {
 function getCanvasDrawColor() {
   return document.getElementById("background-color").value;
 }
+
+
+// 10/10 ここまで直した
+// 次回ここから 
+// *******
 
 // 描画用キャンバスのグリッド線の表示非表示を判定する処理
 function showGrid() {
