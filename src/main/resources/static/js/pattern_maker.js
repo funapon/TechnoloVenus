@@ -9,25 +9,37 @@ let isMouseDown = false;
 let tmpCanvasDrawColor;
 
 class Draw {
+  // 線端の形、丸にする
+  static LINE_CAP = "round";
+
   // 実際に模様を書くキャンバス（描画用キャンバス）
   canvasDraw;
   // 描画機能にアクセスするための2Dコンテキスト
   contextDraw;
-  // 描画用キャンバスの横幅
-  width;
-  // 描画用キャンバスの高さ
-  height;
+  // キャンバスの横幅
+  canvasWidth;
+  // キャンバスの高さ
+  canvasHeight;
+  // キャンバスの矩形情報
+  canvasRect;
+  // 線の太さ
+  lineWidth;
+  // 線の色
+  lineColor;
 
   constructor() {
     this.canvasDraw = document.getElementById("canvasDraw");
     this.contextDraw = this.canvasDraw.getContext("2d");
-    this.width = this.canvasDraw.width;
-    this.height = this.canvasDraw.height;  
+    this.canvasWidth = this.canvasDraw.width;
+    this.canvasHeight = this.canvasDraw.height;
+    this.canvasRect = this.canvasDraw.getBoundingClientRect();
+    this.lineWidth = document.getElementById("pen").value;
+    this.lineColor = document.getElementById("color").value;
   }
 
   // キャンバスのクリア
   clearCanvas() {
-    this.contextDraw.clearRect(0, 0, this.width, this.height);
+    this.contextDraw.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   }
 
   // 塗りつぶしのスタイルに取得した背景色を設定する
@@ -37,7 +49,55 @@ class Draw {
 
   // キャンバスの塗りつぶしを実行する
   fillCanvas() {
-    this.contextDraw.fillRect(0, 0, this.width, this.height);
+    this.contextDraw.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+
+  // 描画用キャンバスへ描画するための事前処理
+  startDraw(event) {
+    // マウスボタンの状態を更新
+    isMouseDown = true;
+
+    // 始点をセット
+    startX = event.clientX - this.canvasRect.left;
+    startY = event.clientY - this.canvasRect.top;
+  }
+
+  // 描画用キャンバスへの描画処理
+  draw(event) {
+    // マウスボタンが押されている場合に描画する
+    if(isMouseDown === false) return;
+    
+    // 終点をセット
+    const endX = event.clientX - this.canvasRect.left;
+    const endY = event.clientY - this.canvasRect.top;
+
+    // 描画する線の設定
+    // 線の先端の形をセットする
+    this.contextDraw.lineCap = LINE_CAP;
+    // 線の太さを画面から取得してセットする
+    this.contextDraw.lineWidth = this.lineWidth;
+    // 線の色を画面から取得してセットする
+    this.contextDraw.strokeStyle = this.lineColor;
+  
+    // 線を描画する
+    // 現在のパスをリセットする
+    this.contextDraw.beginPath();
+    // パスの始点を指定する
+    this.contextDraw.moveTo(startX, startY);
+    // 始点から引数の終点座標までパスを作成
+    this.contextDraw.lineTo(endX, endY);
+    // 作成したパスの描画
+    this.contextDraw.stroke();
+  
+    // 終点を始点にセットする
+    startX = endX;
+    startY = endY;
+  }
+
+  // 描画用キャンバスへの描画を終了する処理
+  endDraw(event) {
+  // マウスボタンの状態を更新
+  isMouseDown = false;
   }
 }
 
@@ -49,10 +109,51 @@ class Grid {
   canvasGrid;
   // 描画機能にアクセスするための2Dコンテキスト
   contextGrid;
+  // キャンバスの横幅
+  canvasWidth;
+  // キャンバスの高さ
+  canvasHeight;
+  // グリット線の間隔
+  gridWidth;
 
   constructor() {
     this.canvasGrid = document.getElementById("canvasGrid");
     this.contextGrid = this.canvasGrid.getContext("2d");
+    this.canvasWidth = this.canvasGrid.width;
+    this.canvasHeight = this.canvasGrid.height;
+    this.gridWidth = this.canvasWidth / 4;
+  }
+
+  // キャンバスのクリア
+  clearCanvas() {
+    this.contextGrid.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+
+  // 描画用キャンバスにグリッド線を描画する処理
+  strokeGrid() {
+    // 線の色を設定する
+    this.contextGrid.strokeStyle = Grid.GRID_COLOR;
+    // 線の種類を点線にする、線の長さ、空白の長さの順で引数を指定
+    this.contextGrid.setLineDash([2,2]);
+    // 現在のパスをリセットする
+    this.contextGrid.beginPath();
+
+    // グリッド線の描画設定
+    for(let i=1; i<4; i++) {
+      // 縦のグリッド線描画設定
+      // 開始座標の移動
+      this.contextGrid.moveTo(i*this.gridWidth, 0);
+      // 現在の位置から指定座標までグリッド線のパスを設定する
+      this.contextGrid.lineTo(i*this.gridWidth, this.canvasHeight);
+      
+      // 横のグリッド線描画設定
+      // 開始座標の移動
+      this.contextGrid.moveTo(0, i*this.gridWidth);
+      // 現在の位置から指定座標までグリッド線のパスを設定する
+      this.contextGrid.lineTo(this.canvasWidth, i*this.gridWidth);
+    }
+    // グリッド線の描画
+    this.contextGrid.stroke();
   }
 }
 
@@ -61,15 +162,82 @@ class Pattern {
   canvasPattern;
   // 描画機能にアクセスするための2Dコンテキスト
   contextPattern;
+  // キャンバスの横幅
+  canvasWidth;
+  // キャンバスの高さ
+  canvasHeight;
   
   constructor() {
-  this.canvasPattern = document.getElementById("canvasPattern");
-  this.contextPattern = this.canvasPattern.getContext("2d");
+    this.canvasPattern = document.getElementById("canvasPattern");
+    this.contextPattern = this.canvasPattern.getContext("2d");
+    this.canvasWidth = this.canvasPattern.width;
+    this.canvasHeight = this.canvasPattern.height;
   }
 
   // キャンバスのクリア
   clearCanvas() {
-    this.contextPattern.clearRect(0, 0, this.canvasPattern.width, this.canvasPattern.height);
+    this.contextPattern.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+
+  // パターンキャンバスへの描画処理
+  drawPattern(event, canvasDrawWidth, canvasDrawHeight, canvasDraw) {
+    // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
+    const size = getSize();
+
+    // パターンキャンバスのサイズを設定
+    this.canvasWidth = size * canvasDrawWidth;
+    this.canvasHeight = size * canvasDrawHeight;
+
+    // 描画用キャンバスの描画内容を画像として取得
+    // 画像オブジェクトの作成
+    const image = new Image();
+    // 描画用キャンバスの内容を画像に設定
+    image.src = canvasDraw.toDataURL("image/png");
+
+    // 上下左右反転繰り返し描画
+    // 画像を取得した際に実行
+    image.onload = function() {
+      for(let x=0; x < size / 2; x++) {
+        for(let y=0; y < size / 2; y++) {
+          // 画像をそのまま表示
+          reverseImage(image, x, y, 1, 1, canvasDrawWidth, canvasDrawHeight);
+          // 右隣に左右反転して表示
+          reverseImage(image, x+1, y, -1, 1, canvasDrawWidth, canvasDrawHeight);
+          // 下に上下反転して表示
+          reverseImage(image, x, y+1, 1, -1, canvasDrawWidth, canvasDrawHeight);
+          // 右斜め下に上下左右反転して表示
+          reverseImage(image, x+1, y+1, -1, -1, canvasDrawWidth, canvasDrawHeight);
+        }
+      }
+    }
+  }
+
+  // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
+  getSize() {
+    // 画像サイズのラジオボタンを取得
+    const elms = document.getElementsByClassName("size");
+
+    // 選択されているサイズを取得する
+    for(let i=0; i < elms.length; i++) {
+      const item = elms.item(i);
+      if(item.checked) {
+        return parseInt(item.dataset["size"]);
+      }
+    }
+  }
+
+  // 画像をパラメータの値で反転して表示する処理
+  reverseImage(image, x, y, sx, sy, canvasDrawWidth, canvasDrawHeight) {
+    // 現在の描画スタイル（線の色や太さ）を保存
+    this.contextPattern.save();
+    // 描画する位置を移動
+    this.contextPattern.translate(x * 2 * canvasDrawWidth, y * 2 * canvasDrawHeight);
+    // 引数にマイナスの値が指定された場合キャンバスを反転
+    this.contextPattern.scale(sx, sy);
+    // 幅と高さを指定してイメージを描画する
+    this.contextPattern.drawImage(image, 0, 0, canvasDrawWidth, canvasDrawHeight);
+    // 保存した描画スタイルを呼び出す
+    this.contextPattern.restore();
   }
 }
 
@@ -105,167 +273,78 @@ function getCanvasDrawColor() {
   return document.getElementById("background-color").value;
 }
 
-
-// 10/10 ここまで直した
-// 次回ここから 
-// *******
-
 // 描画用キャンバスのグリッド線の表示非表示を判定する処理
 function showGrid() {
   // 画面項目「グリッド」にチェックありの場合、グリッドを表示する
   if (document.getElementById("grid").checked) {
-    strokeGrid();
+    grid.strokeGrid();
   } 
   // チェックなしの場合、グリッド線を非表示にする
   else {
-    contextGrid.clearRect(0, 0, canvasGrid.width, canvasGrid.height);
+    grid.clearCanvas();
   }
 }
 
-// 描画用キャンバスにグリッド線を描画する処理
-function strokeGrid() {
-  // 線の色を設定する
-  contextGrid.strokeStyle = GRID_COLOR;
-  // 線の種類を点線にする、線の長さ、空白の長さの順で引数を指定
-  contextGrid.setLineDash([2,2]);
-  // 現在のパスをリセットする
-  contextGrid.beginPath();
+// // パターンキャンバスへの描画処理
+// function drawPattern(e) {
+//   // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
+//   const size = getSize();
 
-  // グリット線の間隔（キャンバス幅の1/4）
-  const gridWidth = canvasGrid.width / 4;
+//   // パターンキャンバスのサイズを設定
+//   canvasPattern.width = size * canvasDraw.width;
+//   canvasPattern.height = size * canvasDraw.height;
 
-  // グリッド線の描画設定
-  for(let i=1; i<4; i++) {
-    // 縦のグリッド線描画設定
-    // 開始座標の移動
-    contextGrid.moveTo(i*gridWidth, 0);
-    // 現在の位置から指定座標までグリッド線のパスを設定する
-    contextGrid.lineTo(i*gridWidth, canvasGrid.height);
-    
-    // 横のグリッド線描画設定
-    // 開始座標の移動
-    contextGrid.moveTo(0, i*gridWidth);
-    // 現在の一から指定座標までグリッド線のパスを設定する
-    contextGrid.lineTo(canvasGrid.width, i*gridWidth);
-  }
-  // グリッド線の描画
-  contextGrid.stroke();
-}
+//   // 描画用キャンバスの描画内容を画像として取得
+//   // 画像オブジェクトの作成
+//   const image = new Image();
+//   // 描画用キャンバスの内容を画像に設定
+//   image.src = canvasDraw.toDataURL("image/png");
 
-// 描画用キャンバスへ描画するための事前処理
-function startDraw(event) {
-  // マウスボタンの状態を更新
-  isMouseDown = true;
-  // 描画用キャンバスの矩形情報を取得
-  const canvasRect = canvasDraw.getBoundingClientRect();
-  // 始点をセット
-  startX = event.clientX - canvasRect.left;
-  startY = event.clientY - canvasRect.top;
-}
+//   // 上下左右反転繰り返し描画
+//   // 画像を取得した際に実行
+//   image.onload = function() {
+//     for(let x=0; x < size / 2; x++) {
+//       for(let y=0; y < size / 2; y++) {
+//         // 画像をそのまま表示
+//         reverseImage(image, x, y, 1, 1);
+//         // 右隣に左右反転して表示
+//         reverseImage(image, x+1, y, -1, 1);
+//         // 下に上下反転して表示
+//         reverseImage(image, x, y+1, 1, -1);
+//         // 右斜め下に上下左右反転して表示
+//         reverseImage(image, x+1, y+1, -1, -1);
+//       }
+//     }
+//   }
+// }
 
-// 描画用キャンバスへの描画処理
-function draw(event) {
-  // マウスボタンが押されている場合に描画する
-  if(isMouseDown === false) return;
-  
-  // 描画用キャンバスの矩形情報を取得
-  const canvasRect = canvasDraw.getBoundingClientRect();
-  // 終点をセット
-  const endX = event.clientX - canvasRect.left;
-  const endY = event.clientY - canvasRect.top;
-  
-  // 描画する線の設定
-  // 線端の形を丸にする
-  contextDraw.lineCap = "round";
-  // 線の太さを画面から取得してセットする
-  contextDraw.lineWidth = document.getElementById("pen").value;
-  // 線の色を画面から取得してセットする
-  contextDraw.strokeStyle = document.getElementById("color").value;
+// // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
+// function getSize() {
+//   // 画像サイズのラジオボタンを取得
+//   const elms = document.getElementsByClassName("size");
 
-  // 線を描画する
-  // 現在のパスをリセットする
-  contextDraw.beginPath();
-  // パスの始点を指定する
-  contextDraw.moveTo(startX, startY);
-  // 始点から引数の終点座標までパスを作成
-  contextDraw.lineTo(endX, endY);
-  // 作成したパスの描画
-  contextDraw.stroke();
+//   // 選択されているサイズを取得する
+//   for(let i=0; i < elms.length; i++) {
+//     const item = elms.item(i);
+//     if(item.checked) {
+//       return parseInt(item.dataset["size"]);
+//     }
+//   }
+// }
 
-  // 終点を始点にセットする
-  startX = endX;
-  startY = endY;
-
-  // パターンキャンバスに描画する
-  drawPattern();
-}
-
-// 描画用キャンバスへの描画を終了する処理
-function endDraw(event) {
-  // マウスボタンの状態を更新
-  isMouseDown = false;
-}
-
-// パターンキャンバスへの描画処理
-function drawPattern(e) {
-  // パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
-  const size = getSize();
-
-  // パターンキャンバスのサイズを設定
-  canvasPattern.width = size * canvasDraw.width;
-  canvasPattern.height = size * canvasDraw.height;
-
-  // 描画用キャンバスの描画内容を画像として取得
-  // 画像オブジェクトの作成
-  const image = new Image();
-  // 描画用キャンバスの内容を画像に設定
-  image.src = canvasDraw.toDataURL("image/png");
-
-  // 上下左右反転繰り返し描画
-  // 画像を取得した際に実行
-  image.onload = function() {
-    for(let x=0; x < size / 2; x++) {
-      for(let y=0; y < size / 2; y++) {
-        // 画像をそのまま表示
-        reverseImage(image, x, y, 1, 1);
-        // 右隣に左右反転して表示
-        reverseImage(image, x+1, y, -1, 1);
-        // 下に上下反転して表示
-        reverseImage(image, x, y+1, 1, -1);
-        // 右斜め下に上下左右反転して表示
-        reverseImage(image, x+1, y+1, -1, -1);
-      }
-    }
-  }
-}
-
-// パターンキャンバスに表示する描画用キャンバス画像のサイズを取得
-function getSize() {
-  // 画像サイズのラジオボタンを取得
-  const elms = document.getElementsByClassName("size");
-
-  // 選択されているサイズを取得する
-  for(let i=0; i < elms.length; i++) {
-    const item = elms.item(i);
-    if(item.checked) {
-      return parseInt(item.dataset["size"]);
-    }
-  }
-}
-
-// 画像をパラメータの値で反転して表示する処理
-function reverseImage(image, x, y, sx, sy) {
-  // 現在の描画スタイル（線の色や太さ）を保存
-  contextPattern.save();
-  // 描画する位置を移動
-  contextPattern.translate(x * 2 * canvasDraw.width, y * 2 * canvasDraw.height);
-  // 引数にマイナスの値が指定された場合キャンバスを反転
-  contextPattern.scale(sx, sy);
-  // 幅と高さを指定してイメージを描画する
-  contextPattern.drawImage(image, 0, 0, canvasDraw.width, canvasDraw.height);
-  // 保存した描画スタイルを呼び出す
-  contextPattern.restore();
-}
+// // 画像をパラメータの値で反転して表示する処理
+// function reverseImage(image, x, y, sx, sy) {
+//   // 現在の描画スタイル（線の色や太さ）を保存
+//   contextPattern.save();
+//   // 描画する位置を移動
+//   contextPattern.translate(x * 2 * canvasDraw.width, y * 2 * canvasDraw.height);
+//   // 引数にマイナスの値が指定された場合キャンバスを反転
+//   contextPattern.scale(sx, sy);
+//   // 幅と高さを指定してイメージを描画する
+//   contextPattern.drawImage(image, 0, 0, canvasDraw.width, canvasDraw.height);
+//   // 保存した描画スタイルを呼び出す
+//   contextPattern.restore();
+// }
 
 // キャンバスの画像を保存する処理 
 function savePattern(target) {
@@ -301,8 +380,9 @@ document.getElementById("clear_btn").addEventListener("click", initCanvasDraw);
 const sizeElms = document.getElementsByClassName("size");
 // 取得した要素に対し1件ずつイベント追加
 for(let i=0; i < sizeElms.length; i++) {
-  // sizeElms[i].addEventListener("change", drawPattern);
-  sizeElms.item(i).addEventListener("change", drawPattern);
+  sizeElms.item(i).addEventListener("change", function(e) {
+    drawPattern(e, draw.canvasWidth, draw.canvasHeight, draw.canvasDraw);
+  });
 }
 // 画像保存ボタンを押した時
 // 画像保存ボタンのHTMLCollectionを取得
@@ -315,21 +395,26 @@ for(let i=0; i < saveElms.length; i++) {
 
     // 対象キャンバスを画像として保存する
     if(targetId === "save_draw") {
-      savePattern(canvasDraw);
+      savePattern(draw.canvasDraw);
     } else if(targetId === "save_pattern") {
-      savePattern(canvasPattern);
+      savePattern(pattern.canvasPattern);
     }
   });
 }
 
 // グリッドキャンバス上でマウスのボタンを押した時
-canvasGrid.addEventListener("mousedown", startDraw);
+grid.canvasGrid.addEventListener("mousedown", draw.startDraw);
 // グリッドキャンバス上でマウスを移動した時
-canvasGrid.addEventListener("mousemove", draw);
+grid.canvasGrid.addEventListener("mousemove", function(e) {
+  draw.draw(e);
+  pattern.drawPattern(e, draw.canvasWidth, draw.canvasHeight, draw.canvasDraw);
+});
+
 // グリッドキャンバス上でマウスのボタンを離したとき
-canvasGrid.addEventListener("mouseup", endDraw);
+grid.canvasGrid.addEventListener("mouseup", draw.endDraw);
+
 // グリッドキャンバス上からマウスボタンが離れたとき
-canvasGrid.addEventListener("mouseleave", endDraw);
+grid.canvasGrid.addEventListener("mouseleave", draw.endDraw);
 
 // グリッドチェックボックスを変更した時
 document.getElementById("grid").addEventListener("change", showGrid);
