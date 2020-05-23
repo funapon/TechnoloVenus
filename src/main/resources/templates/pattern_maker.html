@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html lang="ja"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
@@ -5,27 +7,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>地紋メーカー</title>
+  <title>パターンメーカー</title>
   <link rel="stylesheet" type="text/css" href="../static/css/pattern_maker.css" th:href="@{/css/pattern_maker.css}">
-  <script
-  src="../static/js/pattern_maker.js" th:src="@{/js/pattern_maker.js}"></script>
+  <link href="https://fonts.googleapis.com/css?family=Bad+Script&display=swap" rel="stylesheet">
 </head>
-<body onload="init()">
-  <p>地紋メーカー</p>
-  <input type="button" value="クリア" onclick="clearPattern()">
-  <input type="button" value="地紋パーツを保存" onclick="savePattern(0)">
-  <input type="radio" name="size" id="size_4" onchange="drawPattern()" checked>4×4
-  <input type="radio" name="size" id="size_8" onchange="drawPattern()">8×8
-  <input type="radio" name="size" id="size_16" onchange="drawPattern()">16×16
-  <input type="button" value="地紋画像を保存" onclick="savePattern(1)">
+<body>
+  <h1>Pattern Maker</h1>
+  <input type="button" value="クリア" id="clear_btn">
+  <input type="button" value="パターンパーツを保存" class="save" id="save_draw">
+  <input type="button" value="パターン画像を保存" class="save" id="save_pattern">
+  <div class="size-group">
+    <input type="radio" name="size" class="size" id="size_4" data-size="4" checked><span>4×4</span>
+    <input type="radio" name="size" class="size" id="size_8" data-size="8"><span>8×8</span>
+    <input type="radio" name="size" class="size" id="size_16" data-size="16"><span>16×16</span>
+  </div>
   <hr>
-  <div>
+  <div class="canvas-draw-group">
+    <canvas id="canvasDraw" width="160" height="160"></canvas><br>
     <canvas id="canvasGrid" width="160" height="160"></canvas>
-    <canvas id="canvasDraw" width="160" height="160" onmousedown="startDraw(event)" onmousemove="draw(event)" onmouseup="endDraw(event)" onmouseleave="endDraw(event)"></canvas><br>
-    <input type="checkbox" id="grid" checked onchange="showGrid()">グリッド<br>
-    ペンの太さ：<input type="number" id="pen" value="5" min="1" max="10"><br>
-    ペンの色：<input type="color" id="color" value="#0000FF"><br>
+    <input type="checkbox" id="grid" checked><span>グリッド</span><br>
+    <span>ペンの太さ：</span><input type="number" id="pen" value="5" min="1" max="10"><br>
+    <span>ペンの色：</span><input type="color" id="color" value="#c0c0c0"><br>
+    <span>背景の色：</span><input type="color" id="background-color" value="#FFFFFD"><br>
   </div>
   <canvas id="canvasPattern"></canvas>
+  <script src="../static/js/pattern_maker/function.js" th:src="@{/js/pattern_maker/function.js}"></script>
+  <script src="../static/js/pattern_maker/event_definitions.js" th:src="@{/js/pattern_maker/event_definitions.js}"></script>
+  <script src="../static/js/pattern_maker/main.js" th:src="@{/js/pattern_maker/main.js}"></script>
 </body>
 </html>
